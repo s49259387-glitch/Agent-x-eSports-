@@ -31,7 +31,6 @@ body{
   backdrop-filter:blur(10px);
 }
 
-/* 🔥 UPDATED BUTTON STYLE (ONLY ADD) */
 button{
   padding:14px;
   border:none;
@@ -44,22 +43,35 @@ button{
   transition:0.3s;
 }
 
-/* hover animation */
-button:hover{
-  transform:scale(1.05);
-  box-shadow:0 0 10px #00f2fe;
-}
-
-/* click animation */
 button:active{
   transform:scale(0.95);
 }
 
-/* disabled button same rahe */
+button:hover{
+  box-shadow:0 0 10px #00f2fe;
+}
+
 button:disabled{
   background:gray;
-  transform:none;
-  box-shadow:none;
+}
+
+/* Bottom Nav */
+.bottom-nav{
+  position:fixed;
+  bottom:0;
+  width:100%;
+  display:flex;
+  justify-content:space-around;
+  background:#111;
+  padding:10px 0;
+}
+
+.bottom-nav button{
+  background:none;
+  border:none;
+  color:white;
+  font-size:13px;
+  width:auto;
 }
 </style>
 </head>
@@ -84,6 +96,14 @@ button:disabled{
 <div id="matches"></div>
 </div>
 
+<!-- 🔥 Bottom Nav -->
+<div class="bottom-nav">
+<button onclick="goHome()">🏠 Home</button>
+<button onclick="goMyMatches()">🎮 Matches</button>
+<button onclick="goProfile()">👤 Profile</button>
+<button onclick="goSettings()">⚙️ Settings</button>
+</div>
+
 <script>
 
 const firebaseConfig = {
@@ -96,7 +116,6 @@ firebase.initializeApp(firebaseConfig);
 
 let currentUser;
 
-// LOGIN CHECK
 firebase.auth().onAuthStateChanged(user=>{
   if(!user){
     window.location.href="login.html";
@@ -108,7 +127,6 @@ firebase.auth().onAuthStateChanged(user=>{
   }
 });
 
-// USER DATA
 function loadUser(){
 let ref = firebase.firestore().collection("users").doc(currentUser.uid);
 
@@ -122,7 +140,6 @@ document.getElementById("wallet").innerText=doc.data().wallet;
 });
 }
 
-// 🔥 MATCH LOAD
 function loadMatches(){
 let box = document.getElementById("matches");
 
@@ -144,7 +161,6 @@ joined = true;
 
 box.innerHTML += `
 <div class="card">
-
 <b>${m.title}</b><br>
 ₹${m.entry} → ₹${m.prize}<br>
 
@@ -155,7 +171,6 @@ joined
 ? `<button disabled>Joined ✅</button>`
 : `<button onclick="joinMatch('${doc.id}', ${m.entry})">Join</button>`
 }
-
 </div>
 `;
 
@@ -165,9 +180,7 @@ startTimer(doc.id, m.time);
 });
 }
 
-// JOIN MATCH
 function joinMatch(id, entry){
-
 let matchRef = firebase.firestore().collection("matches").doc(id);
 let userRef = firebase.firestore().collection("users").doc(currentUser.uid);
 
@@ -194,20 +207,16 @@ email: currentUser.email
 matchRef.update({players:players});
 
 alert("Joined ✅");
-
 });
 });
 }
 
-// TIMER
 function startTimer(id, matchTime){
-
 if(!matchTime) return;
 
 let timerBox = document.getElementById("timer_"+id);
 
 let x = setInterval(function(){
-
 let now = new Date().getTime();
 let diff = matchTime - now;
 
@@ -223,10 +232,25 @@ let sec = Math.floor((diff % (1000*60)) / 1000);
 timerBox.innerHTML = "⏱ " + min + "m " + sec + "s";
 
 },1000);
-
 }
 
-// LOGOUT
+/* 🔥 FIXED HOME FUNCTION */
+function goHome(){
+window.location.href="index.html";
+}
+
+function goMyMatches(){
+window.location.href="mymatch.html";
+}
+
+function goProfile(){
+window.location.href="profile.html";
+}
+
+function goSettings(){
+alert("Settings coming soon ⚙️");
+}
+
 function logout(){
 firebase.auth().signOut().then(()=>{
 window.location.href="login.html";
