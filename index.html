@@ -1,79 +1,98 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Agent X</title>
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<title>Agent X eSports</title>
 
 <style>
 body{
   margin:0;
-  padding-top:40px; /* FIX TOP SPACE */
-  padding-bottom:80px; /* FIX BOTTOM NAV */
-  font-family:-apple-system;
+  font-family:Arial;
   background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);
   color:white;
+  padding-top:35px;
 }
 
+/* HEADER */
 .header{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  padding:15px;
+  padding:10px 15px;
 }
 
 .logo{
+  font-size:20px;
   font-weight:bold;
-  font-size:18px;
 }
 
 .walletBox{
-  background:rgba(0,255,255,0.15);
-  padding:8px 15px;
+  border:2px solid cyan;
+  padding:5px 12px;
   border-radius:20px;
-  border:1px solid cyan;
 }
 
+/* BANNER */
 .banner{
-  margin:15px;
-  border-radius:15px;
-  overflow:hidden;
+  padding:10px;
 }
 
 .banner img{
   width:100%;
   height:160px;
   object-fit:cover;
+  border-radius:15px;
 }
 
+/* CARD */
 .card{
-  margin:15px;
-  padding:20px;
-  border-radius:20px;
-  background:rgba(255,255,255,0.05);
-  backdrop-filter:blur(10px);
+  background:#ffffff10;
+  margin:10px;
+  padding:15px;
+  border-radius:15px;
 }
 
-button{
-  padding:14px;
-  font-size:16px;
-  border:none;
-  border-radius:12px;
-  background:linear-gradient(45deg,#00f2fe,#4facfe);
-  color:white;
-  width:100%;
+/* MATCH CARD */
+.match-card{
+  background:#1e293b;
+  border-radius:15px;
+  overflow:hidden;
   margin-top:10px;
-  transition:0.3s;
 }
 
-button:active{
-  transform:scale(0.95);
+.match-card img{
+  width:100%;
+  height:120px;
+  object-fit:cover;
+}
+
+.match-info{
+  padding:10px;
+  text-align:center;
+  font-weight:bold;
+}
+
+/* BUTTON */
+.details-btn{
+  width:90%;
+  margin:10px auto;
+  display:block;
+  padding:10px;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(45deg,#ff416c,#ff4b2b);
+  color:white;
+  font-size:16px;
+}
+
+/* DETAILS */
+.details{
+  display:none;
+  padding:10px;
+  text-align:center;
+  font-size:14px;
 }
 </style>
+
 </head>
 
 <body>
@@ -84,164 +103,44 @@ button:active{
   <div class="walletBox">₹ <span id="wallet">0</span></div>
 </div>
 
+<!-- BANNER -->
 <div class="banner">
-  <img src="https://i.ibb.co/BHpsJ76Q/Screenshot-20260408-140953.jpg" 
-       style="width:100%; height:150px; object-fit:cover; border-radius:15px;">
+  <img src="https://i.ibb.co/BHpsJ76Q/Screenshot-20260408-140953.jpg">
 </div>
 
 <!-- USER -->
 <div class="card">
-👤 <span id="email"></span>
+  👤 <span id="email">abc@gmail.com</span>
 </div>
 
 <!-- MATCHES -->
 <div class="card">
-<h3>🎮 Matches</h3>
-<div id="matches"></div>
+  <h3>🎮 Matches</h3>
+
+  <div class="match-card" onclick="toggleDetails()">
+    <img src="https://i.ibb.co/BHpsJ76Q/Screenshot-20260408-140953.jpg">
+
+    <div class="match-info">
+      Lone wolf (1v1)
+    </div>
+
+    <button class="details-btn">View Details</button>
+
+    <div class="details" id="details">
+      Room ID: ******** <br>
+      Password: ***** <br><br>
+      Time: 8:00 PM <br>
+      Entry: ₹5 → ₹8
+    </div>
+  </div>
+
 </div>
 
 <script>
-
-const firebaseConfig = {
-  apiKey: "AIzaSyBWJuXY8A2jKKBrW4CnLdfU3Spx2U4GUU0",
-  authDomain: "battle-x-agent.firebaseapp.com",
-  projectId: "battle-x-agent"
-};
-
-firebase.initializeApp(firebaseConfig);
-
-let currentUser;
-
-// LOGIN CHECK
-firebase.auth().onAuthStateChanged(user=>{
-  if(!user){
-    window.location.href="login.html";
-  }else{
-    currentUser = user;
-    document.getElementById("email").innerText = user.email;
-    loadUser();
-    loadMatches();
-  }
-});
-
-// USER DATA
-function loadUser(){
-let ref = firebase.firestore().collection("users").doc(currentUser.uid);
-
-ref.get().then(doc=>{
-if(!doc.exists){
-ref.set({wallet:100});
-document.getElementById("wallet").innerText=100;
-}else{
-document.getElementById("wallet").innerText=doc.data().wallet;
+function toggleDetails(){
+  let d = document.getElementById("details");
+  d.style.display = (d.style.display === "block") ? "none" : "block";
 }
-});
-}
-
-// MATCHES
-function loadMatches(){
-let box = document.getElementById("matches");
-
-firebase.firestore().collection("matches").onSnapshot(snap=>{
-box.innerHTML="";
-
-snap.forEach(doc=>{
-let m = doc.data();
-
-let joined = false;
-
-if(m.players){
-m.players.forEach(p=>{
-if(p.uid === currentUser.uid){
-joined = true;
-}
-});
-}
-
-box.innerHTML += `
-<div class="card">
-
-<b>${m.title}</b><br>
-₹${m.entry} → ₹${m.prize}<br>
-
-<div id="timer_${doc.id}" style="color:cyan;margin-top:5px;">⏱ Loading...</div>
-
-${
-joined
-? `<button disabled style="background:gray;">Joined ✅</button>`
-: `<button onclick="joinMatch('${doc.id}', ${m.entry})">Join</button>`
-}
-
-</div>
-`;
-
-startTimer(doc.id, m.time);
-
-});
-});
-}
-
-// JOIN
-function joinMatch(id, entry){
-
-let matchRef = firebase.firestore().collection("matches").doc(id);
-let userRef = firebase.firestore().collection("users").doc(currentUser.uid);
-
-userRef.get().then(u=>{
-let bal = u.data().wallet;
-
-if(bal < entry){
-alert("Low Balance");
-return;
-}
-
-let newBal = bal - entry;
-userRef.update({wallet:newBal});
-document.getElementById("wallet").innerText=newBal;
-
-matchRef.get().then(doc=>{
-let players = doc.data().players || [];
-
-players.push({
-uid: currentUser.uid,
-email: currentUser.email
-});
-
-matchRef.update({players:players});
-
-alert("Joined ✅");
-
-});
-});
-}
-
-// TIMER
-function startTimer(id, matchTime){
-
-if(!matchTime) return;
-
-let timerBox = document.getElementById("timer_"+id);
-
-let x = setInterval(function(){
-
-let now = new Date().getTime();
-let diff = matchTime - now;
-
-if(diff <= 0){
-timerBox.innerHTML = "🔥 Match Started";
-clearInterval(x);
-return;
-}
-
-let min = Math.floor(diff / (1000*60));
-let sec = Math.floor((diff % (1000*60)) / 1000);
-
-timerBox.innerHTML = "⏱ " + min + "m " + sec + "s";
-
-},1000);
-
-}
-
 </script>
 
 </body>
