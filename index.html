@@ -102,10 +102,10 @@ body {
   margin-bottom: 10px;
 }
 
-/* BACK */
-.backBtn {
-  cursor: pointer;
-  margin-bottom: 10px;
+/* WALLET SCREEN */
+#walletScreen {
+  display: none;
+  padding: 20px;
 }
 
 /* BOTTOM NAV */
@@ -123,6 +123,7 @@ body {
 
 <body>
 
+<!-- HEADER -->
 <div class="header">
   <div>🔥 Agent X eSports</div>
   <div class="walletBox">₹ 0</div>
@@ -172,34 +173,61 @@ body {
 
 <!-- MATCH SCREEN -->
 <div id="matchScreen" class="matchScreen">
-  <div class="backBtn" onclick="goBack()">⬅ Back</div>
+  <div onclick="goHome()">⬅ Back</div>
   <h2 id="matchTitle"></h2>
   <div id="matchList"></div>
 </div>
 
+<!-- WALLET SCREEN -->
+<div id="walletScreen">
+
+  <div onclick="goHome()">⬅ Back</div>
+
+  <h2 style="text-align:center;">My Wallet</h2>
+
+  <div style="text-align:center; font-size:28px; margin:20px 0;">
+    ₹ <span id="walletBalance">0</span>
+  </div>
+
+  <input type="number" id="amount" placeholder="Enter amount"
+    style="width:100%; padding:12px; border-radius:10px; border:none; margin-bottom:15px;">
+
+  <button onclick="deposit()" 
+    style="width:100%; padding:12px; margin-bottom:10px; border:none; border-radius:10px; background:green; color:white;">
+    Deposit
+  </button>
+
+  <button onclick="withdraw()" 
+    style="width:100%; padding:12px; border:none; border-radius:10px; background:red; color:white;">
+    Withdraw
+  </button>
+
+</div>
+
 <!-- BOTTOM NAV -->
 <div class="bottomNav">
-  <div onclick="goBack()">🏠</div>
+  <div onclick="goHome()">🏠</div>
   <div>🎮</div>
-  <div>💰</div>
+  <div onclick="openWallet()">💰</div>
   <div>⚙️</div>
 </div>
 
 <script>
+
+let balance = 0;
+
+/* MATCH */
 function openMatch(name){
   document.getElementById("home").style.display="none";
+  document.getElementById("walletScreen").style.display="none";
   document.getElementById("matchScreen").style.display="block";
 
   document.getElementById("matchTitle").innerText = name;
 
   let data = {
-    "Lone Wolf 1v1":[
-      {title:"Match 1", fee:10, prize:20}
-    ],
+    "Lone Wolf 1v1":[{title:"Match 1", fee:10, prize:20}],
     "Full Map 2.0":[],
-    "Class Squad 1v1":[
-      {title:"Match 2", fee:20, prize:40}
-    ],
+    "Class Squad 1v1":[{title:"Match 2", fee:20, prize:40}],
     "Class Squad 2v2":[]
   };
 
@@ -225,10 +253,47 @@ function openMatch(name){
   document.getElementById("matchList").innerHTML = html;
 }
 
-function goBack(){
+/* NAVIGATION */
+function goHome(){
   document.getElementById("home").style.display="block";
   document.getElementById("matchScreen").style.display="none";
+  document.getElementById("walletScreen").style.display="none";
 }
+
+function openWallet(){
+  document.getElementById("home").style.display="none";
+  document.getElementById("matchScreen").style.display="none";
+  document.getElementById("walletScreen").style.display="block";
+}
+
+/* WALLET */
+function deposit(){
+  let amt = document.getElementById("amount").value;
+
+  if(amt && amt > 0){
+    balance += parseInt(amt);
+    updateBalance();
+    alert("₹ " + amt + " Deposited");
+  }
+}
+
+function withdraw(){
+  let amt = document.getElementById("amount").value;
+
+  if(amt && amt <= balance){
+    balance -= parseInt(amt);
+    updateBalance();
+    alert("₹ " + amt + " Withdrawn");
+  } else {
+    alert("Insufficient Balance");
+  }
+}
+
+function updateBalance(){
+  document.getElementById("walletBalance").innerText = balance;
+  document.querySelector(".walletBox").innerText = "₹ " + balance;
+}
+
 </script>
 
 </body>
