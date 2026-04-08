@@ -18,7 +18,7 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 15px;
-  margin-top: 10px;
+  margin-top: 8px;
   border-bottom: 1px solid rgba(255,255,255,0.2);
 }
 
@@ -33,21 +33,22 @@ body {
   border-radius: 20px;
 }
 
-/* BANNER FIX */
+/* BANNER PERFECT FIX */
 .banner {
-  padding: 10px;
-  height: 180px;
-  overflow: hidden;
+  margin: 10px;
+  height: 140px;
   border-radius: 20px;
+  overflow: hidden;
 }
 
 .banner img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
 }
 
-/* MATCH GRID */
+/* GRID */
 .matchGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -75,7 +76,7 @@ body {
   font-weight: bold;
 }
 
-/* MATCH SCREEN */
+/* MATCH PAGE */
 .matchScreen {
   display: none;
   padding: 15px;
@@ -113,7 +114,7 @@ body {
     <img src="https://i.ibb.co/sdYpQbFt/Screenshot-20260408-232023.jpg">
   </div>
 
-  <!-- MATCH CARDS -->
+  <!-- CARDS -->
   <div class="matchGrid">
 
     <div class="matchCard" onclick="openMatch('Lone Wolf 1v1')">
@@ -147,7 +148,6 @@ body {
 </div>
 
 <script>
-
 function openMatch(name){
   document.getElementById("home").style.display="none";
   document.getElementById("matchScreen").style.display="block";
@@ -192,7 +192,6 @@ function goBack(){
   document.getElementById("home").style.display="block";
   document.getElementById("matchScreen").style.display="none";
 }
-
 </script>
 
 </body>
