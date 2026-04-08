@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Agent X PRO</title>
+<title>Agent X</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -40,21 +40,13 @@ button{
   width:100%;
   margin-top:10px;
 }
-
-input{
-  width:100%;
-  padding:10px;
-  border:none;
-  border-radius:10px;
-  margin-top:5px;
-}
 </style>
 </head>
 
 <body>
 
 <div class="header">
-<b>🔥 Agent X PRO</b>
+<b>🔥 Agent X</b>
 <button onclick="logout()">Logout</button>
 </div>
 
@@ -66,25 +58,6 @@ input{
 💰 Wallet: ₹<span id="wallet">0</span>
 </div>
 
-<!-- DEPOSIT -->
-<div class="card">
-<h3>💳 Add Money</h3>
-
-<p>UPI: yourupi@pay</p>
-
-<input id="amount" placeholder="Enter Amount">
-<input id="utr" placeholder="Enter UTR Number">
-
-<button onclick="deposit()">Submit Payment</button>
-</div>
-
-<!-- HISTORY -->
-<div class="card">
-<h3>📜 History</h3>
-<div id="history"></div>
-</div>
-
-<!-- MATCHES -->
 <div class="card">
 <h3>🎮 Matches</h3>
 <div id="matches"></div>
@@ -108,44 +81,27 @@ firebase.auth().onAuthStateChanged(user=>{
     window.location.href="login.html";
   }else{
     currentUser = user;
-    email.innerText = user.email;
+    document.getElementById("email").innerText = user.email;
     loadUser();
     loadMatches();
-    loadHistory();
   }
 });
 
-// USER
+// USER DATA
 function loadUser(){
 let ref = firebase.firestore().collection("users").doc(currentUser.uid);
 
 ref.get().then(doc=>{
 if(!doc.exists){
 ref.set({wallet:100});
-wallet.innerText=100;
+document.getElementById("wallet").innerText=100;
 }else{
-wallet.innerText=doc.data().wallet;
+document.getElementById("wallet").innerText=doc.data().wallet;
 }
 });
 }
 
-// DEPOSIT
-function deposit(){
-let amt = Number(document.getElementById("amount").value);
-let utr = document.getElementById("utr").value;
-
-firebase.firestore().collection("deposits").add({
-uid: currentUser.uid,
-email: currentUser.email,
-amount: amt,
-utr: utr,
-status:"pending"
-});
-
-alert("Deposit Request Sent ✅");
-}
-
-// MATCHES
+// 🔥 MATCH LOAD WITH JOIN FIX + TIMER
 function loadMatches(){
 let box = document.getElementById("matches");
 
@@ -155,35 +111,44 @@ box.innerHTML="";
 snap.forEach(doc=>{
 let m = doc.data();
 
+let joined = false;
+
+if(m.players){
+m.players.forEach(p=>{
+if(p.uid === currentUser.uid){
+joined = true;
+}
+});
+}
+
 box.innerHTML += `
 <div class="card">
+
 <b>${m.title}</b><br>
 ₹${m.entry} → ₹${m.prize}<br>
 
-<button onclick="joinMatch('${doc.id}', ${m.entry}, '${m.title}')">
-Join
-</button>
+<div id="timer_${doc.id}" style="color:cyan;margin-top:5px;">⏱ Loading...</div>
+
+${
+joined
+? `<button disabled style="background:gray;">Joined ✅</button>`
+: `<button onclick="joinMatch('${doc.id}', ${m.entry}, '${m.title}')">Join</button>`
+}
+
 </div>
 `;
+
+startTimer(doc.id, m.time);
+
 });
 });
 }
 
 // JOIN MATCH
-function joinMatch(id, entry, title){
+function joinMatch(id, entry){
 
 let matchRef = firebase.firestore().collection("matches").doc(id);
 let userRef = firebase.firestore().collection("users").doc(currentUser.uid);
-
-matchRef.get().then(doc=>{
-let data = doc.data();
-let players = data.players || [];
-
-let already = players.find(p=>p.uid === currentUser.uid);
-if(already){
-alert("Already Joined");
-return;
-}
 
 userRef.get().then(u=>{
 let bal = u.data().wallet;
@@ -195,15 +160,10 @@ return;
 
 let newBal = bal - entry;
 userRef.update({wallet:newBal});
-wallet.innerText=newBal;
+document.getElementById("wallet").innerText=newBal;
 
-// HISTORY
-firebase.firestore().collection("history").add({
-uid: currentUser.uid,
-type:"Join",
-amount: entry,
-title:title
-});
+matchRef.get().then(doc=>{
+let players = doc.data().players || [];
 
 players.push({
 uid: currentUser.uid,
@@ -218,28 +178,38 @@ alert("Joined ✅");
 });
 }
 
-// HISTORY
-function loadHistory(){
-let box = document.getElementById("history");
+// 🔥 TIMER FUNCTION
+function startTimer(id, matchTime){
 
-firebase.firestore().collection("history")
-.where("uid","==",currentUser.uid)
-.onSnapshot(snap=>{
-box.innerHTML="";
+if(!matchTime) return;
 
-snap.forEach(doc=>{
-let h = doc.data();
+let timerBox = document.getElementById("timer_"+id);
 
-box.innerHTML += `
-<div>${h.type} ₹${h.amount} (${h.title || ""})</div>
-`;
-});
-});
+let x = setInterval(function(){
+
+let now = new Date().getTime();
+let diff = matchTime - now;
+
+if(diff <= 0){
+timerBox.innerHTML = "🔥 Match Started";
+clearInterval(x);
+return;
+}
+
+let min = Math.floor(diff / (1000*60));
+let sec = Math.floor((diff % (1000*60)) / 1000);
+
+timerBox.innerHTML = "⏱ " + min + "m " + sec + "s";
+
+},1000);
+
 }
 
 // LOGOUT
 function logout(){
-firebase.auth().signOut();
+firebase.auth().signOut().then(()=>{
+window.location.href="login.html";
+});
 }
 
 </script>
