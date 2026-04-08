@@ -29,20 +29,22 @@ body {
 
 .walletBox {
   border: 2px solid cyan;
-  padding: 5px 10px;
+  padding: 5px 12px;
   border-radius: 20px;
 }
+
+/* BANNER FIX */
 .banner {
   padding: 10px;
+  height: 180px;
+  overflow: hidden;
+  border-radius: 20px;
 }
 
 .banner img {
   width: 100%;
-  height: 180px;
-  object-fit: cover;   /* sabse important */
-  object-position: center; /* center me focus */
-  border-radius: 20px;
-  display: block;
+  height: 100%;
+  object-fit: cover;
 }
 
 /* MATCH GRID */
@@ -69,7 +71,7 @@ body {
 }
 
 .matchCard p {
-  padding: 8px;
+  padding: 10px;
   font-weight: bold;
 }
 
@@ -90,6 +92,7 @@ body {
 .backBtn {
   margin-bottom: 10px;
   cursor: pointer;
+  font-weight: bold;
 }
 </style>
 </head>
@@ -102,7 +105,7 @@ body {
   <div class="walletBox">₹ 0</div>
 </div>
 
-<!-- HOME SCREEN -->
+<!-- HOME -->
 <div id="home">
 
   <!-- BANNER -->
@@ -110,7 +113,7 @@ body {
     <img src="https://i.ibb.co/sdYpQbFt/Screenshot-20260408-232023.jpg">
   </div>
 
-  <!-- MATCHES -->
+  <!-- MATCH CARDS -->
   <div class="matchGrid">
 
     <div class="matchCard" onclick="openMatch('Lone Wolf 1v1')">
@@ -139,10 +142,7 @@ body {
 <!-- MATCH SCREEN -->
 <div id="matchScreen" class="matchScreen">
   <div class="backBtn" onclick="goBack()">⬅ Back</div>
-
   <h2 id="matchTitle"></h2>
-
-  <!-- MATCH LIST -->
   <div id="matchList"></div>
 </div>
 
