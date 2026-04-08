@@ -5,6 +5,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
 <style>
 *{ box-sizing:border-box; }
 
@@ -24,6 +28,7 @@ body{
   background:rgba(255,255,255,0.05);
 }
 
+/* bottom nav */
 .nav{
   position:fixed;
   bottom:0;
@@ -40,7 +45,7 @@ body{
 
 <div class="card">
 <h2>🎮 My Matches</h2>
-<p>No matches yet</p>
+<div id="myMatches"></div>
 </div>
 
 <div class="nav">
@@ -50,9 +55,73 @@ body{
 </div>
 
 <script>
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBWJuXY8A2jKKBrW4CnLdfU3Spx2U4GUU0",
+  authDomain: "battle-x-agent.firebaseapp.com",
+  projectId: "battle-x-agent"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+let currentUser;
+
+// 🔥 CHECK LOGIN
+firebase.auth().onAuthStateChanged(user=>{
+  if(!user){
+    window.location.href="login.html";
+  }else{
+    currentUser = user;
+    loadMyMatches();
+  }
+});
+
+// 🔥 LOAD ONLY JOINED MATCHES
+function loadMyMatches(){
+
+let box = document.getElementById("myMatches");
+
+firebase.firestore().collection("matches").onSnapshot(snap=>{
+box.innerHTML="";
+
+let found = false;
+
+snap.forEach(doc=>{
+let m = doc.data();
+
+if(m.players){
+m.players.forEach(p=>{
+if(p.uid === currentUser.uid){
+
+found = true;
+
+box.innerHTML += `
+<div class="card">
+<b>${m.title}</b><br>
+₹${m.entry} → ₹${m.prize}<br>
+<p style="color:lightgreen;">Joined ✅</p>
+</div>
+`;
+
+}
+});
+}
+
+});
+
+if(!found){
+box.innerHTML = "<p>No matches joined yet ❌</p>";
+}
+
+});
+
+}
+
+// NAV
 function goHome(){ window.location.href="index.html"; }
 function goWallet(){ window.location.href="wallet.html"; }
 function goProfile(){ window.location.href="profile.html"; }
+
 </script>
 
 </body>
