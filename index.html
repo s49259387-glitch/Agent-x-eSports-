@@ -15,7 +15,6 @@ body{
   font-family:-apple-system;
   background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);
   color:white;
-  padding-bottom:120px; /* 🔥 added */
 }
 
 .header{
@@ -32,33 +31,46 @@ body{
   backdrop-filter:blur(10px);
 }
 
+/* 🔥 BUTTON UPGRADE (ADD ONLY) */
 button{
-  padding:10px;
+  padding:15px;
+  font-size:16px;
   border:none;
-  border-radius:10px;
+  border-radius:12px;
   background:linear-gradient(45deg,#00f2fe,#4facfe);
   color:white;
   width:100%;
   margin-top:10px;
+  transition:0.3s;
 }
 
-/* 🔥 NEW Bottom Nav */
+button:active{
+  transform:scale(0.95);
+}
+
+button:hover{
+  box-shadow:0 0 15px #00f2fe;
+}
+
+/* 🔥 BOTTOM NAV ADD */
 .bottom-nav{
-position:fixed;
-bottom:60px; /* ads ke upar */
-width:100%;
-display:flex;
-justify-content:space-around;
-background:#111;
-padding:10px 0;
-color:white;
-z-index:1000;
+  position:fixed;
+  bottom:0;
+  left:0;
+  width:100%;
+  display:flex;
+  justify-content:space-around;
+  background:#111;
+  padding:10px 0;
+  border-top:1px solid #333;
 }
 
-.bottom-nav div{
-text-align:center;
-font-size:12px;
-flex:1;
+.bottom-nav button{
+  background:none;
+  border:none;
+  color:white;
+  font-size:14px;
+  width:auto;
 }
 </style>
 </head>
@@ -83,12 +95,17 @@ flex:1;
 <div id="matches"></div>
 </div>
 
-<!-- 🔥 NEW Bottom Navigation -->
+<!-- 🔥 BOTTOM NAV ADD -->
 <div class="bottom-nav">
-<div onclick="goHome()">🏠<br>Home</div>
-<div onclick="goMatches()">🎮<br>My Matches</div>
-<div onclick="goProfile()">👤<br>Profile</div>
-<div onclick="goSettings()">⚙️<br>Settings</div>
+
+<button onclick="location.reload()">🏠 Home</button>
+
+<button onclick="goMyMatches()">🎮 Matches</button>
+
+<button onclick="goProfile()">👤 Profile</button>
+
+<button onclick="goSettings()">⚙️ Settings</button>
+
 </div>
 
 <script>
@@ -129,7 +146,7 @@ document.getElementById("wallet").innerText=doc.data().wallet;
 });
 }
 
-// MATCH LOAD
+// 🔥 MATCH LOAD
 function loadMatches(){
 let box = document.getElementById("matches");
 
@@ -233,21 +250,17 @@ timerBox.innerHTML = "⏱ " + min + "m " + sec + "s";
 
 }
 
-// 🔥 NEW NAV FUNCTIONS
-function goHome(){
-location.reload();
-}
-
-function goMatches(){
-window.location.href="mymatch.html";
+// 🔥 NAV FUNCTIONS ADD
+function goMyMatches(){
+  window.location.href="mymatch.html";
 }
 
 function goProfile(){
-window.location.href="profile.html";
+  window.location.href="profile.html";
 }
 
 function goSettings(){
-alert("Settings coming soon ⚙️");
+  alert("Settings coming soon ⚙️");
 }
 
 // LOGOUT
@@ -256,17 +269,7 @@ firebase.auth().signOut().then(()=>{
 window.location.href="login.html";
 });
 }
-function goHome(){
-window.location.href="index.html";
-}
-/* 🔥 Bottom nav improvement (no design change) */
-.bottom-nav div{
-min-height:50px; /* click area bada */
-display:flex;
-flex-direction:column;
-justify-content:center;
-align-items:center;
-}
+
 </script>
 
 </body>
