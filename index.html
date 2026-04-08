@@ -17,6 +17,11 @@ body{
   color:white;
 }
 
+/* 🔥 NEW: bottom space so content hide na ho */
+body{
+  padding-bottom:70px;
+}
+
 .header{
   display:flex;
   justify-content:space-between;
@@ -40,6 +45,25 @@ button{
   width:100%;
   margin-top:10px;
 }
+
+/* 🔥 NEW: Bottom Navigation */
+.bottom-nav{
+position:fixed;
+bottom:0;
+width:100%;
+display:flex;
+justify-content:space-around;
+background:#111;
+padding:10px 0;
+color:white;
+z-index:1000;
+}
+
+.bottom-nav div{
+text-align:center;
+font-size:12px;
+flex:1;
+}
 </style>
 </head>
 
@@ -61,6 +85,19 @@ button{
 <div class="card">
 <h3>🎮 Matches</h3>
 <div id="matches"></div>
+</div>
+
+<!-- 🔥 NEW: Bottom Menu -->
+<div class="bottom-nav">
+
+<div onclick="goHome()">🏠<br>Home</div>
+
+<div onclick="goMatches()">🎮<br>My Matches</div>
+
+<div onclick="goProfile()">👤<br>Profile</div>
+
+<div onclick="goSettings()">⚙️<br>Settings</div>
+
 </div>
 
 <script>
@@ -101,7 +138,7 @@ document.getElementById("wallet").innerText=doc.data().wallet;
 });
 }
 
-// 🔥 MATCH LOAD WITH JOIN FIX + TIMER
+// MATCH LOAD
 function loadMatches(){
 let box = document.getElementById("matches");
 
@@ -132,7 +169,7 @@ box.innerHTML += `
 ${
 joined
 ? `<button disabled style="background:gray;">Joined ✅</button>`
-: `<button onclick="joinMatch('${doc.id}', ${m.entry}, '${m.title}')">Join</button>`
+: `<button onclick="joinMatch('${doc.id}', ${m.entry})">Join</button>`
 }
 
 </div>
@@ -178,7 +215,7 @@ alert("Joined ✅");
 });
 }
 
-// 🔥 TIMER FUNCTION
+// TIMER
 function startTimer(id, matchTime){
 
 if(!matchTime) return;
@@ -203,6 +240,23 @@ timerBox.innerHTML = "⏱ " + min + "m " + sec + "s";
 
 },1000);
 
+}
+
+// 🔥 NEW NAV FUNCTIONS
+function goHome(){
+location.reload();
+}
+
+function goMatches(){
+window.location.href="mymatch.html";
+}
+
+function goProfile(){
+window.location.href="profile.html";
+}
+
+function goSettings(){
+alert("Settings coming soon ⚙️");
 }
 
 // LOGOUT
