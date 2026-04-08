@@ -12,19 +12,42 @@
 <style>
 body{
   margin:0;
-  padding-top:40px;
-  padding-bottom:80px;
+  padding-top:40px; /* FIX TOP SPACE */
+  padding-bottom:80px; /* FIX BOTTOM NAV */
   font-family:-apple-system;
   background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);
   color:white;
 }
 
-*{ box-sizing:border-box; }
-
 .header{
   display:flex;
   justify-content:space-between;
+  align-items:center;
   padding:15px;
+}
+
+.logo{
+  font-weight:bold;
+  font-size:18px;
+}
+
+.walletBox{
+  background:rgba(0,255,255,0.15);
+  padding:8px 15px;
+  border-radius:20px;
+  border:1px solid cyan;
+}
+
+.banner{
+  margin:15px;
+  border-radius:15px;
+  overflow:hidden;
+}
+
+.banner img{
+  width:100%;
+  height:160px;
+  object-fit:cover;
 }
 
 .card{
@@ -32,55 +55,49 @@ body{
   padding:20px;
   border-radius:20px;
   background:rgba(255,255,255,0.05);
+  backdrop-filter:blur(10px);
 }
 
 button{
   padding:14px;
+  font-size:16px;
   border:none;
-  border-radius:10px;
+  border-radius:12px;
   background:linear-gradient(45deg,#00f2fe,#4facfe);
   color:white;
   width:100%;
   margin-top:10px;
+  transition:0.3s;
 }
 
-.nav{
-  position:fixed;
-  bottom:0;
-  width:100%;
-  display:flex;
-  justify-content:space-around;
-  background:#111;
-  padding:10px 0;
+button:active{
+  transform:scale(0.95);
 }
 </style>
 </head>
 
 <body>
 
+<!-- HEADER -->
 <div class="header">
-<b>🔥 Agent X</b>
-<button onclick="logout()">Logout</button>
+  <div class="logo">🔥 Agent X eSports</div>
+  <div class="walletBox">₹ <span id="wallet">0</span></div>
 </div>
 
+<!-- BANNER -->
+<div class="banner">
+  <img src="https://i.ibb.co/0r5YdFZ/banner.jpg">
+</div>
+
+<!-- USER -->
 <div class="card">
 👤 <span id="email"></span>
 </div>
 
-<div class="card">
-💰 Wallet: ₹<span id="wallet">0</span>
-</div>
-
+<!-- MATCHES -->
 <div class="card">
 <h3>🎮 Matches</h3>
 <div id="matches"></div>
-</div>
-
-<div class="nav">
-<div onclick="goHome()">🏠</div>
-<div onclick="goWallet()">💰</div>
-<div onclick="goProfile()">👤</div>
-<div onclick="goMatches()">🎮</div>
 </div>
 
 <script>
@@ -95,6 +112,7 @@ firebase.initializeApp(firebaseConfig);
 
 let currentUser;
 
+// LOGIN CHECK
 firebase.auth().onAuthStateChanged(user=>{
   if(!user){
     window.location.href="login.html";
@@ -106,6 +124,7 @@ firebase.auth().onAuthStateChanged(user=>{
   }
 });
 
+// USER DATA
 function loadUser(){
 let ref = firebase.firestore().collection("users").doc(currentUser.uid);
 
@@ -119,6 +138,7 @@ document.getElementById("wallet").innerText=doc.data().wallet;
 });
 }
 
+// MATCHES
 function loadMatches(){
 let box = document.getElementById("matches");
 
@@ -148,19 +168,7 @@ box.innerHTML += `
 
 ${
 joined
-? `
-<button onclick="toggleDetails('${doc.id}')">📄 Details</button>
-
-<div id="details_${doc.id}" style="display:none;margin-top:10px;background:rgba(255,255,255,0.05);padding:10px;border-radius:10px;">
-
-<p>🎯 Room ID: ${m.roomId ? m.roomId : "**************"}</p>
-<button onclick="copyText('${m.roomId ? m.roomId : ""}')">Copy ID</button>
-
-<p>🔑 Password: ${m.roomPass ? m.roomPass : "*****"}</p>
-<button onclick="copyText('${m.roomPass ? m.roomPass : ""}')">Copy Pass</button>
-
-</div>
-`
+? `<button disabled style="background:gray;">Joined ✅</button>`
 : `<button onclick="joinMatch('${doc.id}', ${m.entry})">Join</button>`
 }
 
@@ -173,6 +181,7 @@ startTimer(doc.id, m.time);
 });
 }
 
+// JOIN
 function joinMatch(id, entry){
 
 let matchRef = firebase.firestore().collection("matches").doc(id);
@@ -206,7 +215,9 @@ alert("Joined ✅");
 });
 }
 
+// TIMER
 function startTimer(id, matchTime){
+
 if(!matchTime) return;
 
 let timerBox = document.getElementById("timer_"+id);
@@ -228,35 +239,7 @@ let sec = Math.floor((diff % (1000*60)) / 1000);
 timerBox.innerHTML = "⏱ " + min + "m " + sec + "s";
 
 },1000);
-}
 
-// DETAILS
-function toggleDetails(id){
-let box = document.getElementById("details_"+id);
-box.style.display = box.style.display === "none" ? "block" : "none";
-}
-
-// COPY
-function copyText(text){
-if(!text){
-alert("Room not available yet ❌");
-return;
-}
-navigator.clipboard.writeText(text);
-alert("Copied ✅");
-}
-
-// NAV
-function goHome(){ window.location.href="index.html"; }
-function goWallet(){ window.location.href="wallet.html"; }
-function goProfile(){ window.location.href="profile.html"; }
-function goMatches(){ window.location.href="mymatch.html"; }
-
-// LOGOUT
-function logout(){
-firebase.auth().signOut().then(()=>{
-window.location.href="login.html";
-});
 }
 
 </script>
