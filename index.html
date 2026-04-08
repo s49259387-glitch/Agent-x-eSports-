@@ -11,7 +11,7 @@ body {
   background: linear-gradient(#1c1c3c,#2b2b5c);
   color: white;
   padding-bottom: 90px;
-  scroll-behavior: smooth; /* 🔥 smooth scroll */
+  scroll-behavior: smooth;
 }
 
 /* HEADER */
@@ -50,30 +50,21 @@ body {
   object-fit: cover;
 }
 
-/* 🔥 INSTRUCTIONS BOX GLOW */
+/* INSTRUCTIONS */
 .instructionsBox {
   width: calc(100% - 30px);
-  margin: 0 auto 15px auto;
+  margin: 0 auto 15px;
   padding: 12px;
   background: rgba(255,255,255,0.08);
   border-radius: 12px;
   font-size: 13px;
-  line-height: 1.5;
   color: #eee;
-
   box-shadow: 0 0 10px rgba(0,255,255,0.3);
-  transition: 0.3s;
-}
-
-.instructionsBox:hover {
-  box-shadow: 0 0 20px cyan;
 }
 
 /* TITLE */
 .sectionTitle {
   text-align: center;
-  font-size: 18px;
-  font-weight: bold;
   margin: 10px 0;
 }
 
@@ -83,11 +74,10 @@ body {
   grid-template-columns: 1fr 1fr;
   gap: 15px;
   padding: 0 15px;
-  margin-top: 20px;
   margin-bottom: 110px;
 }
 
-/* 🔥 CARD GLOW + HOVER */
+/* CARD */
 .matchCard {
   background: rgba(255,255,255,0.08);
   border-radius: 15px;
@@ -95,8 +85,6 @@ body {
   text-align: center;
   cursor: pointer;
   transition: 0.3s;
-
-  box-shadow: 0 0 8px rgba(0,0,0,0.3);
 }
 
 .matchCard:hover {
@@ -112,23 +100,25 @@ body {
 
 .matchCard p {
   padding: 12px;
-  font-weight: bold;
 }
 
-/* 🔥 SCROLL ANIMATION */
-.matchCard {
-  animation: fadeUp 0.6s ease;
+/* MATCH PAGE */
+.matchScreen {
+  display: none;
+  padding: 15px;
 }
 
-@keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.matchBox {
+  background: white;
+  color: black;
+  border-radius: 15px;
+  padding: 15px;
+  margin-bottom: 15px;
+}
+
+.backBtn {
+  cursor: pointer;
+  margin-bottom: 10px;
 }
 
 /* BOTTOM NAV */
@@ -142,11 +132,6 @@ body {
   padding: 12px 0;
   border-top: 1px solid rgba(255,255,255,0.2);
 }
-
-.bottomNav div {
-  text-align: center;
-  font-size: 12px;
-}
 </style>
 </head>
 
@@ -158,55 +143,101 @@ body {
   <div class="walletBox">₹ 0</div>
 </div>
 
-<!-- BANNER -->
-<div class="banner">
-  <img src="https://i.ibb.co/sdYpQbFt/Screenshot-20260408-232023.jpg">
-</div>
+<!-- HOME -->
+<div id="home">
 
-<!-- INSTRUCTIONS -->
-<div class="instructionsBox">
-  <b>Instructions:</b><br>
-  • Match join karne se pehle wallet me balance hona chahiye<br>
-  • Wrong ID ya late entry par refund nahi milega<br>
-  • Custom room details match start se pehle milenge<br>
-  • Fair play rakhe, hack use karne par ban hoga
-</div>
-
-<!-- TITLE -->
-<h2 class="sectionTitle">Select Match Type</h2>
-
-<!-- CARDS -->
-<div class="matchGrid">
-
-  <div class="matchCard">
+  <div class="banner">
     <img src="https://i.ibb.co/sdYpQbFt/Screenshot-20260408-232023.jpg">
-    <p>Lone wolf (1v1)</p>
   </div>
 
-  <div class="matchCard">
-    <img src="https://i.ibb.co/sdYpQbFt/Screenshot-20260408-232023.jpg">
-    <p>Full map 2.0</p>
+  <div class="instructionsBox">
+    <b>Instructions:</b><br>
+    • Wallet me balance hona chahiye<br>
+    • Late entry = no refund<br>
+    • Room details match se pehle milenge
   </div>
 
-  <div class="matchCard">
-    <img src="https://i.ibb.co/sdYpQbFt/Screenshot-20260408-232023.jpg">
-    <p>Class squad (1v1)</p>
-  </div>
+  <h2 class="sectionTitle">Select Match Type</h2>
 
-  <div class="matchCard">
-    <img src="https://i.ibb.co/sdYpQbFt/Screenshot-20260408-232023.jpg">
-    <p>Class squad (2v2)</p>
-  </div>
+  <div class="matchGrid">
 
+    <div class="matchCard" onclick="openMatch('Lone Wolf 1v1')">
+      <img src="https://i.ibb.co/sdYpQbFt/Screenshot-20260408-232023.jpg">
+      <p>Lone wolf (1v1)</p>
+    </div>
+
+    <div class="matchCard" onclick="openMatch('Full Map 2.0')">
+      <img src="https://i.ibb.co/sdYpQbFt/Screenshot-20260408-232023.jpg">
+      <p>Full map 2.0</p>
+    </div>
+
+    <div class="matchCard" onclick="openMatch('Class Squad 1v1')">
+      <img src="https://i.ibb.co/sdYpQbFt/Screenshot-20260408-232023.jpg">
+      <p>Class squad (1v1)</p>
+    </div>
+
+    <div class="matchCard" onclick="openMatch('Class Squad 2v2')">
+      <img src="https://i.ibb.co/sdYpQbFt/Screenshot-20260408-232023.jpg">
+      <p>Class squad (2v2)</p>
+    </div>
+
+  </div>
 </div>
 
-<!-- BOTTOM NAV -->
-<div class="bottomNav">
-  <div>🏠<br>Home</div>
-  <div>🎮<br>Matches</div>
-  <div>💰<br>Wallet</div>
-  <div>⚙️<br>Settings</div>
+<!-- MATCH SCREEN -->
+<div id="matchScreen" class="matchScreen">
+  <div class="backBtn" onclick="goBack()">⬅ Back</div>
+  <h2 id="matchTitle"></h2>
+  <div id="matchList"></div>
 </div>
+
+<script>
+
+function openMatch(name){
+  document.getElementById("home").style.display="none";
+  document.getElementById("matchScreen").style.display="block";
+
+  document.getElementById("matchTitle").innerText = name;
+
+  let data = {
+    "Lone Wolf 1v1":[
+      {title:"Match #1", fee:10, prize:20}
+    ],
+    "Full Map 2.0":[],
+    "Class Squad 1v1":[
+      {title:"Match #2", fee:15, prize:30}
+    ],
+    "Class Squad 2v2":[]
+  };
+
+  let matches = data[name];
+  let html = "";
+
+  if(matches.length==0){
+    html = `<div class="matchBox">
+      <h3>${name}</h3>
+      <p>Entry Fee: ₹ **</p>
+      <p>Prize: ₹ **</p>
+    </div>`;
+  } else {
+    matches.forEach(m=>{
+      html += `<div class="matchBox">
+        <h3>${m.title}</h3>
+        <p>Entry Fee: ₹ ${m.fee}</p>
+        <p>Prize: ₹ ${m.prize}</p>
+      </div>`;
+    });
+  }
+
+  document.getElementById("matchList").innerHTML = html;
+}
+
+function goBack(){
+  document.getElementById("home").style.display="block";
+  document.getElementById("matchScreen").style.display="none";
+}
+
+</script>
 
 </body>
 </html>
