@@ -23,14 +23,15 @@ body {
 
 .walletBox {
   border: 2px solid cyan;
-  padding: 5px 10px;
+  padding: 6px 14px;
   border-radius: 20px;
+  font-weight: bold;
 }
 
 /* BANNER */
 .banner {
   margin: 12px;
-  height: 150px;
+  height: 160px;
   border-radius: 20px;
   overflow: hidden;
 }
@@ -44,15 +45,16 @@ body {
 /* INSTRUCTIONS */
 .instructionsBox {
   margin: 15px;
-  padding: 12px;
+  padding: 14px;
   background: rgba(255,255,255,0.08);
-  border-radius: 12px;
-  box-shadow: 0 0 10px cyan;
+  border-radius: 15px;
+  box-shadow: 0 0 12px cyan;
 }
 
 /* TITLE */
 .sectionTitle {
   text-align: center;
+  margin-top: 10px;
 }
 
 /* GRID */
@@ -61,7 +63,6 @@ body {
   grid-template-columns: 1fr 1fr;
   gap: 15px;
   padding: 15px;
-  margin-bottom: 100px;
 }
 
 /* CARD */
@@ -81,7 +82,8 @@ body {
 
 .matchCard img {
   width: 100%;
-  height: 100px;
+  height: 130px;
+  object-fit: cover;
 }
 
 .matchCard p {
@@ -97,8 +99,8 @@ body {
 .matchBox {
   background: white;
   color: black;
-  padding: 10px;
-  border-radius: 10px;
+  padding: 12px;
+  border-radius: 12px;
   margin-bottom: 10px;
 }
 
@@ -106,6 +108,14 @@ body {
 #walletScreen {
   display: none;
   padding: 20px;
+}
+
+/* WALLET ICON BUTTON */
+.walletBtn {
+  background: linear-gradient(45deg, #00c6ff, #0072ff);
+  padding: 10px;
+  border-radius: 50%;
+  font-size: 20px;
 }
 
 /* BOTTOM NAV */
@@ -116,7 +126,13 @@ body {
   background: #1c1c3c;
   display: flex;
   justify-content: space-around;
-  padding: 10px;
+  padding: 12px 0;
+  font-size: 14px;
+}
+
+.bottomNav div {
+  text-align: center;
+  cursor: pointer;
 }
 </style>
 </head>
@@ -126,7 +142,7 @@ body {
 <!-- HEADER -->
 <div class="header">
   <div>🔥 Agent X eSports</div>
-  <div class="walletBox">₹ 0</div>
+  <div class="walletBox">₹ <span id="topBalance">0</span></div>
 </div>
 
 <!-- HOME -->
@@ -178,12 +194,12 @@ body {
   <div id="matchList"></div>
 </div>
 
-<!-- 🔥 WALLET SCREEN (ADDED) -->
+<!-- WALLET SCREEN -->
 <div id="walletScreen">
 
   <div onclick="goHome()">⬅ Back</div>
 
-  <h2 style="text-align:center;">My Wallet</h2>
+  <h2 style="text-align:center;">💰 My Wallet</h2>
 
   <div style="text-align:center; font-size:26px; margin:20px 0;">
     ₹ <span id="walletBalance">0</span>
@@ -206,15 +222,15 @@ body {
 
 <!-- BOTTOM NAV -->
 <div class="bottomNav">
-  <div onclick="goHome()">🏠</div>
-  <div>🎮</div>
-  <div onclick="openWallet()">💰</div> <!-- 🔥 ADDED -->
-  <div>⚙️</div>
+  <div onclick="goHome()">🏠<br>Home</div>
+  <div>🎮<br>Matches</div>
+  <div onclick="openWallet()">💰<br>Wallet</div>
+  <div>⚙️<br>Settings</div>
 </div>
 
 <script>
 
-/* EXISTING */
+/* MATCH SYSTEM */
 function openMatch(name){
   document.getElementById("home").style.display="none";
   document.getElementById("matchScreen").style.display="block";
@@ -257,7 +273,7 @@ function goHome(){
   document.getElementById("walletScreen").style.display="none";
 }
 
-/* 🔥 WALLET LOGIC (ADDED) */
+/* WALLET SYSTEM */
 let balance = 0;
 
 function openWallet(){
@@ -290,7 +306,7 @@ function withdraw(){
 
 function updateBalance(){
   document.getElementById("walletBalance").innerText = balance;
-  document.querySelector(".walletBox").innerText = "₹ " + balance;
+  document.getElementById("topBalance").innerText = balance;
 }
 
 </script>
