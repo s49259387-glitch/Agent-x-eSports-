@@ -1,15 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Agent X eSports</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
 body{
   margin:0;
-  font-family:Arial;
-  background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);
+  font-family:sans-serif;
+  background: linear-gradient(180deg,#1c1c3c,#2a2a5c);
   color:white;
-  padding-top:35px;
 }
 
 /* HEADER */
@@ -17,17 +16,17 @@ body{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  padding:10px 15px;
+  padding:15px;
 }
 
 .logo{
-  font-size:20px;
+  font-size:18px;
   font-weight:bold;
 }
 
 .walletBox{
-  border:2px solid cyan;
-  padding:5px 12px;
+  border:1px solid #00eaff;
+  padding:6px 15px;
   border-radius:20px;
 }
 
@@ -38,22 +37,22 @@ body{
 
 .banner img{
   width:100%;
-  height:160px;
+  height:180px;
   object-fit:cover;
   border-radius:15px;
 }
 
 /* CARD */
 .card{
-  background:#ffffff10;
-  margin:10px;
+  margin:15px;
+  background:rgba(255,255,255,0.05);
   padding:15px;
   border-radius:15px;
 }
 
 /* MATCH CARD */
 .match-card{
-  background:#1e293b;
+  background:#1f2a44;
   border-radius:15px;
   overflow:hidden;
   margin-top:10px;
@@ -61,38 +60,29 @@ body{
 
 .match-card img{
   width:100%;
-  height:120px;
+  height:130px;
   object-fit:cover;
 }
 
 .match-info{
-  padding:10px;
   text-align:center;
+  padding:10px;
   font-weight:bold;
 }
 
-/* BUTTON */
-.details-btn{
+.view-btn{
   width:90%;
-  margin:10px auto;
+  margin:10px auto 15px;
   display:block;
   padding:10px;
   border:none;
   border-radius:10px;
-  background:linear-gradient(45deg,#ff416c,#ff4b2b);
+  background:#ff4d4d;
   color:white;
-  font-size:16px;
+  font-weight:bold;
 }
 
-/* DETAILS */
-.details{
-  display:none;
-  padding:10px;
-  text-align:center;
-  font-size:14px;
-}
 </style>
-
 </head>
 
 <body>
@@ -105,8 +95,7 @@ body{
 
 <!-- BANNER -->
 <div class="banner">
-  <img src="https://i.ibb.co/sdYpQbFt/Screenshot-20260408-232023.jpg"
-       style="width:100%; height:150px; object-fit:cover; border-radius:15px;">
+  <img src="https://i.ibb.co/sdYpQbFt/Screenshot-20260408-232023.jpg">
 </div>
 
 <!-- USER -->
@@ -118,35 +107,21 @@ body{
 <div class="card">
   <h3>🎮 Matches</h3>
 
-  <div class="matchCard">
-  <img src="https://i.ibb.co/sdYpQbFt/Screenshot-20260408-232023.jpg" class="matchImg">
-
-  <div class="matchInfo">
-    <h3>Lone wolf (1v1)</h3>
-    <button onclick="openMatch()">View Details</button>
-  </div>
-</div>
+  <div class="match-card" onclick="openMatch()">
+    <img src="https://i.ibb.co/sdYpQbFt/Screenshot-20260408-232023.jpg">
 
     <div class="match-info">
       Lone wolf (1v1)
     </div>
 
-    <button class="details-btn">View Details</button>
-
-    <div class="details" id="details">
-      Room ID: ******** <br>
-      Password: ***** <br><br>
-      Time: 8:00 PM <br>
-      Entry: ₹5 → ₹8
-    </div>
+    <button class="view-btn">View Details</button>
   </div>
 
 </div>
 
 <script>
-function toggleDetails(){
-  let d = document.getElementById("details");
-  d.style.display = (d.style.display === "block") ? "none" : "block";
+function openMatch(){
+  alert("Match details next step me banaenge 🔥");
 }
 </script>
 
