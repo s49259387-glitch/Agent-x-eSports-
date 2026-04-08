@@ -15,11 +15,7 @@ body{
   font-family:-apple-system;
   background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);
   color:white;
-}
-
-/* 🔥 NEW: bottom space so content hide na ho */
-body{
-  padding-bottom:70px;
+  padding-bottom:120px; /* 🔥 added */
 }
 
 .header{
@@ -46,10 +42,10 @@ button{
   margin-top:10px;
 }
 
-/* 🔥 NEW: Bottom Navigation */
+/* 🔥 NEW Bottom Nav */
 .bottom-nav{
 position:fixed;
-bottom:0;
+bottom:60px; /* ads ke upar */
 width:100%;
 display:flex;
 justify-content:space-around;
@@ -87,17 +83,12 @@ flex:1;
 <div id="matches"></div>
 </div>
 
-<!-- 🔥 NEW: Bottom Menu -->
+<!-- 🔥 NEW Bottom Navigation -->
 <div class="bottom-nav">
-
 <div onclick="goHome()">🏠<br>Home</div>
-
 <div onclick="goMatches()">🎮<br>My Matches</div>
-
 <div onclick="goProfile()">👤<br>Profile</div>
-
 <div onclick="goSettings()">⚙️<br>Settings</div>
-
 </div>
 
 <script>
