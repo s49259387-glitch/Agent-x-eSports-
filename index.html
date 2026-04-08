@@ -40,7 +40,7 @@ body {
   height: 150px;
   border-radius: 20px;
   overflow: hidden;
-  margin-bottom: 30px; /* ✅ GAP FIX */
+  margin-bottom: 30px; /* ✅ GAP */
 }
 
 .banner img {
@@ -49,14 +49,24 @@ body {
   object-fit: cover;
 }
 
-/* ✅ TITLE ADDED */
+/* ✅ INSTRUCTIONS BOX */
+.instructionsBox {
+  margin: 0 15px 15px;
+  padding: 12px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 12px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #ddd;
+}
+
+/* TITLE */
 .sectionTitle {
   margin-top: 10px;
   margin-bottom: 10px;
   text-align: center;
   font-size: 18px;
   font-weight: bold;
-  color: white;
 }
 
 /* GRID */
@@ -65,7 +75,7 @@ body {
   grid-template-columns: 1fr 1fr;
   gap: 15px;
   padding: 0 15px;
-  margin-top: 15px; /* ✅ CARDS NICHE */
+  margin-top: 25px; /* ✅ NICHE PUSH */
   margin-bottom: 110px;
 }
 
@@ -122,7 +132,16 @@ body {
   <img src="https://i.ibb.co/sdYpQbFt/Screenshot-20260408-232023.jpg">
 </div>
 
-<!-- ✅ TITLE -->
+<!-- ✅ INSTRUCTIONS -->
+<div class="instructionsBox">
+  <b>Instructions:</b><br>
+  • Match join karne se pehle wallet me balance hona chahiye<br>
+  • Wrong ID ya late entry par refund nahi milega<br>
+  • Custom room details match start se pehle milenge<br>
+  • Fair play rakhe, hack use karne par ban hoga
+</div>
+
+<!-- TITLE -->
 <h2 class="sectionTitle">Select Match Type</h2>
 
 <!-- CARDS -->
