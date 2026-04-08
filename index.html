@@ -10,41 +10,30 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
 <style>
-
-/* ✅ FIX: Proper CSS block */
 body{
   margin:0;
+  padding-top:40px;
+  padding-bottom:80px;
   font-family:-apple-system;
   background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);
   color:white;
-
-  /* 🔥 FIX: top + bottom spacing */
-  padding-top:40px;
-  padding-bottom:80px;
 }
 
-/* Fix overflow */
-*{
-  box-sizing:border-box;
-}
+*{ box-sizing:border-box; }
 
-/* Header */
 .header{
   display:flex;
   justify-content:space-between;
   padding:15px;
 }
 
-/* Cards */
 .card{
   margin:15px;
   padding:20px;
   border-radius:20px;
   background:rgba(255,255,255,0.05);
-  backdrop-filter:blur(10px);
 }
 
-/* Buttons */
 button{
   padding:14px;
   border:none;
@@ -53,34 +42,17 @@ button{
   color:white;
   width:100%;
   margin-top:10px;
-  font-size:16px;
-
-  /* 🔥 Animation */
-  transition:0.3s;
 }
 
-button:hover{
-  transform:scale(1.05);
-}
-
-/* 🔥 Bottom Navbar */
-.navbar{
+.nav{
   position:fixed;
   bottom:0;
   width:100%;
-  background:#0f172a;
   display:flex;
   justify-content:space-around;
+  background:#111;
   padding:10px 0;
-  border-top:1px solid #333;
 }
-
-.navbar div{
-  text-align:center;
-  color:white;
-  font-size:12px;
-}
-
 </style>
 </head>
 
@@ -104,12 +76,11 @@ button:hover{
 <div id="matches"></div>
 </div>
 
-<!-- 🔥 BOTTOM NAVBAR -->
-<div class="navbar">
-  <div onclick="goHome()">🏠<br>Home</div>
-  <div onclick="goWallet()">💰<br>Wallet</div>
-  <div onclick="goProfile()">👤<br>Profile</div>
-  <div onclick="goMatches()">🎮<br>Matches</div>
+<div class="nav">
+<div onclick="goHome()">🏠</div>
+<div onclick="goWallet()">💰</div>
+<div onclick="goProfile()">👤</div>
+<div onclick="goMatches()">🎮</div>
 </div>
 
 <script>
@@ -124,7 +95,6 @@ firebase.initializeApp(firebaseConfig);
 
 let currentUser;
 
-// LOGIN CHECK
 firebase.auth().onAuthStateChanged(user=>{
   if(!user){
     window.location.href="login.html";
@@ -136,7 +106,6 @@ firebase.auth().onAuthStateChanged(user=>{
   }
 });
 
-// USER DATA
 function loadUser(){
 let ref = firebase.firestore().collection("users").doc(currentUser.uid);
 
@@ -150,7 +119,6 @@ document.getElementById("wallet").innerText=doc.data().wallet;
 });
 }
 
-// MATCH LOAD
 function loadMatches(){
 let box = document.getElementById("matches");
 
@@ -180,7 +148,19 @@ box.innerHTML += `
 
 ${
 joined
-? `<button disabled style="background:gray;">Joined ✅</button>`
+? `
+<button onclick="toggleDetails('${doc.id}')">📄 Details</button>
+
+<div id="details_${doc.id}" style="display:none;margin-top:10px;background:rgba(255,255,255,0.05);padding:10px;border-radius:10px;">
+
+<p>🎯 Room ID: ${m.roomId ? m.roomId : "**************"}</p>
+<button onclick="copyText('${m.roomId ? m.roomId : ""}')">Copy ID</button>
+
+<p>🔑 Password: ${m.roomPass ? m.roomPass : "*****"}</p>
+<button onclick="copyText('${m.roomPass ? m.roomPass : ""}')">Copy Pass</button>
+
+</div>
+`
 : `<button onclick="joinMatch('${doc.id}', ${m.entry})">Join</button>`
 }
 
@@ -193,7 +173,6 @@ startTimer(doc.id, m.time);
 });
 }
 
-// JOIN MATCH
 function joinMatch(id, entry){
 
 let matchRef = firebase.firestore().collection("matches").doc(id);
@@ -227,9 +206,7 @@ alert("Joined ✅");
 });
 }
 
-// TIMER
 function startTimer(id, matchTime){
-
 if(!matchTime) return;
 
 let timerBox = document.getElementById("timer_"+id);
@@ -251,25 +228,29 @@ let sec = Math.floor((diff % (1000*60)) / 1000);
 timerBox.innerHTML = "⏱ " + min + "m " + sec + "s";
 
 },1000);
-
 }
 
-// NAVIGATION
-function goHome(){
-window.location.href="index.html";
+// DETAILS
+function toggleDetails(id){
+let box = document.getElementById("details_"+id);
+box.style.display = box.style.display === "none" ? "block" : "none";
 }
 
-function goWallet(){
-window.location.href="wallet.html";
+// COPY
+function copyText(text){
+if(!text){
+alert("Room not available yet ❌");
+return;
+}
+navigator.clipboard.writeText(text);
+alert("Copied ✅");
 }
 
-function goProfile(){
-window.location.href="profile.html";
-}
-
-function goMatches(){
-window.location.href="mymatch.html";
-}
+// NAV
+function goHome(){ window.location.href="index.html"; }
+function goWallet(){ window.location.href="wallet.html"; }
+function goProfile(){ window.location.href="profile.html"; }
+function goMatches(){ window.location.href="mymatch.html"; }
 
 // LOGOUT
 function logout(){
