@@ -8,22 +8,22 @@
 body {
   margin: 0;
   font-family: Arial;
-  background: linear-gradient(#1c1c3c, #2b2b5c);
+  background: linear-gradient(#1c1c3c,#2b2b5c);
   color: white;
 }
 
-/* HEADER FIX */
+/* HEADER */
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 15px;
-  margin-top: 8px;
+  padding: 15px;
+  margin-top: 10px;
   border-bottom: 1px solid rgba(255,255,255,0.2);
 }
 
 .logo {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: bold;
 }
 
@@ -40,16 +40,12 @@ body {
   margin: 10px 0;
 }
 
-/* SECTION */
-.section {
-  padding: 15px;
-}
-
-/* GRID */
+/* MATCH GRID */
 .matchGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
+  padding: 10px;
 }
 
 /* CARD */
@@ -63,18 +59,17 @@ body {
 
 .matchCard img {
   width: 100%;
-  height: 100px;
+  height: 110px;
   object-fit: cover;
 }
 
 .matchCard p {
   padding: 8px;
-  font-size: 14px;
   font-weight: bold;
 }
 
-/* MATCH PAGE */
-.matchPage {
+/* MATCH SCREEN */
+.matchScreen {
   display: none;
   padding: 15px;
 }
@@ -82,18 +77,15 @@ body {
 .matchBox {
   background: white;
   color: black;
-  padding: 15px;
   border-radius: 15px;
+  padding: 15px;
   margin-bottom: 15px;
 }
 
 .backBtn {
   margin-bottom: 10px;
-  display: inline-block;
   cursor: pointer;
-  color: cyan;
 }
-
 </style>
 </head>
 
@@ -105,115 +97,95 @@ body {
   <div class="walletBox">₹ 0</div>
 </div>
 
-<!-- HOME PAGE -->
-<div id="homePage">
+<!-- HOME SCREEN -->
+<div id="home">
 
   <!-- BANNER -->
-  <div class="section banner">
+  <div class="banner">
     <img src="https://i.ibb.co/sdYpQbFt/Screenshot-20260408-232023.jpg">
   </div>
 
   <!-- MATCHES -->
-  <div class="section">
-    <h3>🎮 Matches</h3>
+  <div class="matchGrid">
 
-    <div class="matchGrid">
-
-      <div class="matchCard" onclick="openMatches('lonewolf')">
-        <img src="https://i.ibb.co/sdYpQbFt/Screenshot-20260408-232023.jpg">
-        <p>Lone wolf (1v1)</p>
-      </div>
-
-      <div class="matchCard" onclick="openMatches('fullmap')">
-        <img src="https://i.ibb.co/sdYpQbFt/Screenshot-20260408-232023.jpg">
-        <p>Full map 2.0</p>
-      </div>
-
-      <div class="matchCard" onclick="openMatches('cs1')">
-        <img src="https://i.ibb.co/sdYpQbFt/Screenshot-20260408-232023.jpg">
-        <p>Class squad (1v1)</p>
-      </div>
-
-      <div class="matchCard" onclick="openMatches('cs2')">
-        <img src="https://i.ibb.co/sdYpQbFt/Screenshot-20260408-232023.jpg">
-        <p>Class squad (2v2)</p>
-      </div>
-
+    <div class="matchCard" onclick="openMatch('Lone Wolf 1v1')">
+      <img src="https://i.ibb.co/sdYpQbFt/Screenshot-20260408-232023.jpg">
+      <p>Lone wolf (1v1)</p>
     </div>
+
+    <div class="matchCard" onclick="openMatch('Full Map 2.0')">
+      <img src="https://i.ibb.co/sdYpQbFt/Screenshot-20260408-232023.jpg">
+      <p>Full map 2.0</p>
+    </div>
+
+    <div class="matchCard" onclick="openMatch('Class Squad 1v1')">
+      <img src="https://i.ibb.co/sdYpQbFt/Screenshot-20260408-232023.jpg">
+      <p>Class squad (1v1)</p>
+    </div>
+
+    <div class="matchCard" onclick="openMatch('Class Squad 2v2')">
+      <img src="https://i.ibb.co/sdYpQbFt/Screenshot-20260408-232023.jpg">
+      <p>Class squad (2v2)</p>
+    </div>
+
   </div>
 </div>
 
-<!-- MATCH PAGE -->
-<div id="matchPage" class="matchPage">
+<!-- MATCH SCREEN -->
+<div id="matchScreen" class="matchScreen">
   <div class="backBtn" onclick="goBack()">⬅ Back</div>
+
   <h2 id="matchTitle"></h2>
+
+  <!-- MATCH LIST -->
   <div id="matchList"></div>
 </div>
 
 <script>
 
-/* ADMIN CONTROL (YAHAN SE MATCH ADD KAR) */
-const matchesData = {
-  lonewolf: [
-    {title:"1v1 Lone Wolf #1", prize:15, fee:10},
-    {title:"1v1 Lone Wolf #2", prize:20, fee:15}
-  ],
+function openMatch(name){
+  document.getElementById("home").style.display="none";
+  document.getElementById("matchScreen").style.display="block";
 
-  fullmap: [],
+  document.getElementById("matchTitle").innerText = name;
 
-  cs1: [
-    {title:"CS 1v1 Match", prize:25, fee:5}
-  ],
-
-  cs2: []
-};
-
-
-/* OPEN MATCH PAGE */
-function openMatches(type){
-  document.getElementById("homePage").style.display="none";
-  document.getElementById("matchPage").style.display="block";
-
-  let title = {
-    lonewolf:"Lone Wolf Matches",
-    fullmap:"Full Map Matches",
-    cs1:"Class Squad (1v1)",
-    cs2:"Class Squad (2v2)"
+  let data = {
+    "Lone Wolf 1v1":[
+      {title:"Match #1", fee:10, prize:20},
+      {title:"Match #2", fee:15, prize:30}
+    ],
+    "Full Map 2.0":[],
+    "Class Squad 1v1":[
+      {title:"Match #3", fee:20, prize:40}
+    ],
+    "Class Squad 2v2":[]
   };
 
-  document.getElementById("matchTitle").innerText = title[type];
+  let matches = data[name];
+  let html="";
 
-  let data = matchesData[type];
-  let html = "";
-
-  if(data.length === 0){
-    html += `
-      <div class="matchBox">
-        <h3>${title[type]}</h3>
-        <p>Prize: ₹ **</p>
-        <p>Entry Fee: ₹ **</p>
-      </div>
-    `;
+  if(matches.length==0){
+    html = `<div class="matchBox">
+      <h3>${name}</h3>
+      <p>Entry Fee: ₹ **</p>
+      <p>Prize: ₹ **</p>
+    </div>`;
   } else {
-    data.forEach(m => {
-      html += `
-        <div class="matchBox">
-          <h3>${m.title}</h3>
-          <p>Prize: ₹ ${m.prize}</p>
-          <p>Entry Fee: ₹ ${m.fee}</p>
-        </div>
-      `;
+    matches.forEach(m=>{
+      html += `<div class="matchBox">
+        <h3>${m.title}</h3>
+        <p>Entry Fee: ₹ ${m.fee}</p>
+        <p>Prize: ₹ ${m.prize}</p>
+      </div>`;
     });
   }
 
   document.getElementById("matchList").innerHTML = html;
 }
 
-
-/* BACK */
 function goBack(){
-  document.getElementById("homePage").style.display="block";
-  document.getElementById("matchPage").style.display="none";
+  document.getElementById("home").style.display="block";
+  document.getElementById("matchScreen").style.display="none";
 }
 
 </script>
