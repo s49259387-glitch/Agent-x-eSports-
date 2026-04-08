@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Agent X PRO</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+<style>
+body{
+  margin:0;
+  font-family:-apple-system;
+  background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);
+  color:white;
+}
+
+.header{
+  display:flex;
+  justify-content:space-between;
+  padding:15px;
+}
+
+.card{
+  margin:15px;
+  padding:20px;
+  border-radius:20px;
+  background:rgba(255,255,255,0.05);
+  backdrop-filter:blur(10px);
+}
+
+button{
+  padding:10px;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(45deg,#00f2fe,#4facfe);
+  color:white;
+  width:100%;
+  margin-top:10px;
+}
+
+input{
+  width:100%;
+  padding:10px;
+  border:none;
+  border-radius:10px;
+  margin-top:5px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+<b>🔥 Agent X PRO</b>
+<button onclick="logout()">Logout</button>
+</div>
+
+<div class="card">
+👤 <span id="email"></span>
+</div>
+
+<div class="card">
+💰 Wallet: ₹<span id="wallet">0</span>
+</div>
+
+<!-- DEPOSIT -->
+<div class="card">
+<h3>💳 Add Money</h3>
+
+<p>UPI: yourupi@pay</p>
+
+<input id="amount" placeholder="Enter Amount">
+<input id="utr" placeholder="Enter UTR Number">
+
+<button onclick="deposit()">Submit Payment</button>
+</div>
+
+<!-- HISTORY -->
+<div class="card">
+<h3>📜 History</h3>
+<div id="history"></div>
+</div>
+
+<!-- MATCHES -->
+<div class="card">
+<h3>🎮 Matches</h3>
+<div id="matches"></div>
+</div>
+
+<script>
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBWJuXY8A2jKKBrW4CnLdfU3Spx2U4GUU0",
+  authDomain: "battle-x-agent.firebaseapp.com",
+  projectId: "battle-x-agent"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+let currentUser;
+
+// LOGIN CHECK
+firebase.auth().onAuthStateChanged(user=>{
+  if(!user){
+    window.location.href="login.html";
+  }else{
+    currentUser = user;
+    email.innerText = user.email;
+    loadUser();
+    loadMatches();
+    loadHistory();
+  }
+});
+
+// USER
+function loadUser(){
+let ref = firebase.firestore().collection("users").doc(currentUser.uid);
+
+ref.get().then(doc=>{
+if(!doc.exists){
+ref.set({wallet:100});
+wallet.innerText=100;
+}else{
+wallet.innerText=doc.data().wallet;
+}
+});
+}
+
+// DEPOSIT
+function deposit(){
+let amt = Number(document.getElementById("amount").value);
+let utr = document.getElementById("utr").value;
+
+firebase.firestore().collection("deposits").add({
+uid: currentUser.uid,
+email: currentUser.email,
+amount: amt,
+utr: utr,
+status:"pending"
+});
+
+alert("Deposit Request Sent ✅");
+}
+
+// MATCHES
+function loadMatches(){
+let box = document.getElementById("matches");
+
+firebase.firestore().collection("matches").onSnapshot(snap=>{
+box.innerHTML="";
+
+snap.forEach(doc=>{
+let m = doc.data();
+
+box.innerHTML += `
+<div class="card">
+<b>${m.title}</b><br>
+₹${m.entry} → ₹${m.prize}<br>
+
+<button onclick="joinMatch('${doc.id}', ${m.entry}, '${m.title}')">
+Join
+</button>
+</div>
+`;
+});
+});
+}
+
+// JOIN MATCH
+function joinMatch(id, entry, title){
+
+let matchRef = firebase.firestore().collection("matches").doc(id);
+let userRef = firebase.firestore().collection("users").doc(currentUser.uid);
+
+matchRef.get().then(doc=>{
+let data = doc.data();
+let players = data.players || [];
+
+let already = players.find(p=>p.uid === currentUser.uid);
+if(already){
+alert("Already Joined");
+return;
+}
+
+userRef.get().then(u=>{
+let bal = u.data().wallet;
+
+if(bal < entry){
+alert("Low Balance");
+return;
+}
+
+let newBal = bal - entry;
+userRef.update({wallet:newBal});
+wallet.innerText=newBal;
+
+// HISTORY
+firebase.firestore().collection("history").add({
+uid: currentUser.uid,
+type:"Join",
+amount: entry,
+title:title
+});
+
+players.push({
+uid: currentUser.uid,
+email: currentUser.email
+});
+
+matchRef.update({players:players});
+
+alert("Joined ✅");
+
+});
+});
+}
+
+// HISTORY
+function loadHistory(){
+let box = document.getElementById("history");
+
+firebase.firestore().collection("history")
+.where("uid","==",currentUser.uid)
+.onSnapshot(snap=>{
+box.innerHTML="";
+
+snap.forEach(doc=>{
+let h = doc.data();
+
+box.innerHTML += `
+<div>${h.type} ₹${h.amount} (${h.title || ""})</div>
+`;
+});
+});
+}
+
+// LOGOUT
+function logout(){
+firebase.auth().signOut();
+}
+
+</script>
+
+</body>
+</html>

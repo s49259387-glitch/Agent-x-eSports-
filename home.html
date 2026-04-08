@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Agent X Battle</title>
+
+<!-- ✅ MOBILE FIX -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+<style>
+body{
+ margin:0;
+ font-family:sans-serif;
+ background:linear-gradient(180deg,#0f0c29,#302b63,#24243e);
+ color:white;
+
+ /* ✅ CENTER + MOBILE FIX */
+ max-width:500px;
+ margin:auto;
+}
+
+.header{
+ display:flex;
+ justify-content:space-between;
+ padding:15px;
+}
+
+.wallet{
+ background:#1e1e2f;
+ padding:15px;
+ margin:10px;
+ border-radius:12px;
+}
+
+.match{
+ background:#1e1e2f;
+ padding:15px;
+ margin:10px;
+ border-radius:12px;
+}
+
+button{
+ padding:10px 15px;
+ border:none;
+ border-radius:8px;
+ background:#ff416c;
+ color:white;
+ margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <h3>🏆 Agent X Battle</h3>
+  <div>₹100</div>
+</div>
+
+<div class="wallet">
+  <h4>💰 Wallet</h4>
+  <button>Add Money</button>
+  <button>Withdraw</button>
+</div>
+
+<div class="match">
+  <h4>Free Fire Lone Wolf 1v1</h4>
+  <p>₹10 | Win ₹20</p>
+  <button>Join</button>
+  <button>Room</button>
+</div>
+
+</body>
+</html>

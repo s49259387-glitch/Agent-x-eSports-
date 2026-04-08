@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Panel</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+<style>
+body{
+  margin:0;
+  font-family:sans-serif;
+  background:#0f172a;
+  color:white;
+}
+
+.card{
+  margin:15px;
+  padding:20px;
+  background:#1e293b;
+  border-radius:15px;
+}
+
+button{
+  padding:10px;
+  border:none;
+  border-radius:10px;
+  background:#22c55e;
+  color:white;
+  width:100%;
+  margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+
+<h2 style="text-align:center;">👑 Admin Panel</h2>
+
+<!-- MATCH CREATE -->
+<div class="card">
+<h3>Create Match</h3>
+
+<input id="title" placeholder="Title">
+<input id="entry" placeholder="Entry">
+<input id="prize" placeholder="Prize">
+
+<button onclick="createMatch()">Create</button>
+</div>
+
+<!-- DEPOSITS -->
+<div class="card">
+<h3>💰 Deposit Requests</h3>
+<div id="deposits"></div>
+</div>
+
+<script>
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBWJuXY8A2jKKBrW4CnLdfU3Spx2U4GUU0",
+  authDomain: "battle-x-agent.firebaseapp.com",
+  projectId: "battle-x-agent"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+// CREATE MATCH
+function createMatch(){
+
+let title = document.getElementById("title").value;
+let entry = Number(document.getElementById("entry").value);
+let prize = Number(document.getElementById("prize").value);
+
+firebase.firestore().collection("matches").add({
+title:title,
+entry:entry,
+prize:prize,
+players:[]
+});
+
+alert("Match Created ✅");
+}
+
+// LOAD DEPOSITS
+function loadDeposits(){
+
+let box = document.getElementById("deposits");
+
+firebase.firestore().collection("deposits").onSnapshot(snap=>{
+box.innerHTML="";
+
+snap.forEach(doc=>{
+let d = doc.data();
+
+box.innerHTML += `
+<div class="card">
+<b>${d.email}</b><br>
+₹${d.amount} | UTR: ${d.utr}<br>
+Status: ${d.status}
+
+${d.status=="pending" ? `
+<button onclick="approve('${doc.id}','${d.uid}',${d.amount})">
+Approve
+</button>
+` : `<b>Approved ✅</b>`}
+
+</div>
+`;
+});
+});
+}
+
+// APPROVE
+function approve(id, uid, amount){
+
+let userRef = firebase.firestore().collection("users").doc(uid);
+
+// add money
+userRef.get().then(doc=>{
+let bal = doc.data().wallet || 0;
+
+let newBal = bal + amount;
+userRef.update({wallet:newBal});
+
+// update deposit status
+firebase.firestore().collection("deposits").doc(id).update({
+status:"approved"
+});
+
+alert("Amount Added ✅");
+
+});
+}
+
+// LOAD
+loadDeposits();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Agent X Login</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+
+<style>
+body{
+  margin:0;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);
+  font-family:-apple-system;
+  color:white;
+}
+
+.box{
+  width:320px;
+  padding:25px;
+  border-radius:20px;
+  background:rgba(255,255,255,0.05);
+  backdrop-filter:blur(15px);
+  box-shadow:0 0 30px rgba(0,255,255,0.3);
+  text-align:center;
+}
+
+input{
+  width:100%;
+  padding:12px;
+  margin:8px 0;
+  border:none;
+  border-radius:10px;
+  background:rgba(255,255,255,0.1);
+  color:white;
+  outline:none;
+}
+
+button{
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:12px;
+  background:linear-gradient(45deg,#00f2fe,#4facfe);
+  color:white;
+  font-weight:bold;
+  margin-top:10px;
+  box-shadow:0 0 10px cyan;
+}
+
+.title{
+  font-size:22px;
+  font-weight:bold;
+  margin-bottom:15px;
+  text-shadow:0 0 10px cyan,0 0 20px purple;
+}
+
+.link{
+  margin-top:10px;
+  font-size:13px;
+  opacity:0.8;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+<div class="title">🔥 Agent X eSports</div>
+
+<input id="email" placeholder="Enter Email">
+<input id="pass" type="password" placeholder="Enter Password">
+
+<button onclick="login()">Login</button>
+
+<div class="link" onclick="register()">Create Account</div>
+
+</div>
+
+<script>
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBWJuXY8A2jKKBrW4CnLdfU3Spx2U4GUU0",
+  authDomain: "battle-x-agent.firebaseapp.com",
+  projectId: "battle-x-agent"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+// LOGIN
+function login(){
+
+  let emailVal = document.getElementById("email").value;
+  let passVal = document.getElementById("pass").value;
+
+  if(emailVal=="" || passVal==""){
+    alert("Fill all fields ❌");
+    return;
+  }
+
+  firebase.auth().signInWithEmailAndPassword(emailVal, passVal)
+  .then(()=>{
+
+    // ADMIN CHECK
+    if(emailVal === "admin2@battle.com"){
+      window.location.href="admin.html";
+    }else{
+      window.location.href="index.html";
+    }
+
+  })
+  .catch(e=>{
+    alert(e.message);
+  });
+
+}
+
+// REGISTER
+function register(){
+
+  let emailVal = document.getElementById("email").value;
+  let passVal = document.getElementById("pass").value;
+
+  if(emailVal=="" || passVal==""){
+    alert("Fill all fields ❌");
+    return;
+  }
+
+  firebase.auth().createUserWithEmailAndPassword(emailVal, passVal)
+  .then(()=>{
+    alert("Account Created ✅");
+  })
+  .catch(e=>{
+    alert(e.message);
+  });
+
+}
+
+</script>
+
+</body>
+</html>
