@@ -178,14 +178,14 @@ body {
   <div id="matchList"></div>
 </div>
 
-<!-- WALLET SCREEN -->
+<!-- 🔥 WALLET SCREEN (ADDED) -->
 <div id="walletScreen">
 
   <div onclick="goHome()">⬅ Back</div>
 
   <h2 style="text-align:center;">My Wallet</h2>
 
-  <div style="text-align:center; font-size:28px; margin:20px 0;">
+  <div style="text-align:center; font-size:26px; margin:20px 0;">
     ₹ <span id="walletBalance">0</span>
   </div>
 
@@ -208,19 +208,17 @@ body {
 <div class="bottomNav">
   <div onclick="goHome()">🏠</div>
   <div>🎮</div>
-  <div onclick="openWallet()">💰</div>
+  <div onclick="openWallet()">💰</div> <!-- 🔥 ADDED -->
   <div>⚙️</div>
 </div>
 
 <script>
 
-let balance = 0;
-
-/* MATCH */
+/* EXISTING */
 function openMatch(name){
   document.getElementById("home").style.display="none";
-  document.getElementById("walletScreen").style.display="none";
   document.getElementById("matchScreen").style.display="block";
+  document.getElementById("walletScreen").style.display="none";
 
   document.getElementById("matchTitle").innerText = name;
 
@@ -253,12 +251,14 @@ function openMatch(name){
   document.getElementById("matchList").innerHTML = html;
 }
 
-/* NAVIGATION */
 function goHome(){
   document.getElementById("home").style.display="block";
   document.getElementById("matchScreen").style.display="none";
   document.getElementById("walletScreen").style.display="none";
 }
+
+/* 🔥 WALLET LOGIC (ADDED) */
+let balance = 0;
 
 function openWallet(){
   document.getElementById("home").style.display="none";
@@ -266,7 +266,6 @@ function openWallet(){
   document.getElementById("walletScreen").style.display="block";
 }
 
-/* WALLET */
 function deposit(){
   let amt = document.getElementById("amount").value;
 
