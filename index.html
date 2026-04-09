@@ -8,108 +8,93 @@
 body {
   margin: 0;
   font-family: Arial;
-  background: linear-gradient(#1d1f3a,#2c2f5c);
+  background: linear-gradient(#1d1f3a,#2c2f5a);
   color: white;
 }
 
 /* HEADER */
 .header {
-  display:flex;
-  justify-content:space-between;
-  padding:15px;
-  font-size:18px;
-}
-
-.walletBox {
-  border:2px solid cyan;
-  border-radius:20px;
-  padding:5px 12px;
+  display: flex;
+  justify-content: space-between;
+  padding: 15px;
+  font-size: 18px;
 }
 
 /* BANNER */
 .banner {
-  margin:12px;
-  height:180px;
-  border-radius:20px;
-  overflow:hidden;
+  margin: 12px;
+  border-radius: 20px;
+  overflow: hidden;
 }
 .banner img {
-  width:100%;
-  height:100%;
-  object-fit:cover;
-}
-
-/* INSTRUCTIONS */
-.instructionsBox {
-  margin:15px;
-  padding:14px;
-  background:rgba(255,255,255,0.08);
-  border-radius:15px;
-  box-shadow:0 0 15px cyan;
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
 }
 
 /* TITLE */
 .sectionTitle {
-  text-align:center;
-  margin-top:20px;
+  text-align: center;
+  margin-top: 10px;
 }
 
-/* MATCH GRID */
+/* MATCH CARDS */
 .matchGrid {
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-  padding:12px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 12px;
 }
 
 .matchCard {
-  background:#3a3d6b;
-  border-radius:15px;
-  overflow:hidden;
-  text-align:center;
-  cursor:pointer;
+  background: #3a3d6b;
+  border-radius: 15px;
+  overflow: hidden;
 }
 
 .matchCard img {
-  width:100%;
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
 }
 
-/* MATCH DETAILS PAGE */
-#matchPage {
-  display:none;
-  padding:15px;
+.matchCard p {
+  text-align: center;
+  padding: 10px;
+}
+
+/* DETAILS SCREEN */
+#detailsPage {
+  display: none;
+  padding: 15px;
+}
+
+.backBtn {
+  margin-bottom: 10px;
 }
 
 .matchBox {
-  background:#3a3d6b;
-  border-radius:20px;
-  padding:15px;
-  margin-bottom:15px;
-  box-shadow:0 0 20px cyan;
+  background: #3a3d6b;
+  border-radius: 20px;
+  padding: 15px;
+  margin-bottom: 15px;
+  box-shadow: 0 0 15px cyan;
 }
 
 .row {
-  display:flex;
-  justify-content:space-between;
-  margin:6px 0;
+  display: flex;
+  justify-content: space-between;
+  margin: 6px 0;
 }
 
-/* JOIN BUTTON */
 .joinBtn {
-  margin-top:12px;
-  background:cyan;
-  color:black;
-  text-align:center;
-  padding:10px;
-  border-radius:10px;
-  font-weight:bold;
-}
-
-/* BACK */
-.backBtn {
-  margin-bottom:10px;
-  display:block;
-  cursor:pointer;
+  width: 100%;
+  padding: 12px;
+  background: cyan;
+  border: none;
+  border-radius: 10px;
+  margin-top: 10px;
+  font-weight: bold;
 }
 </style>
 </head>
@@ -119,7 +104,7 @@ body {
 <!-- HEADER -->
 <div class="header">
   <div>🔥 Agent X eSports</div>
-  <div class="walletBox">₹ 0</div>
+  <div>₹0</div>
 </div>
 
 <!-- HOME -->
@@ -129,92 +114,104 @@ body {
     <img src="https://i.postimg.cc/htcg0Zd2/file-000000009a8c7208a5891d21e8cc7c9c.png">
   </div>
 
-  <div class="instructionsBox">
-    <b>Instructions:</b><br>
-    • Wallet me balance hona chahiye<br>
-    • No refund<br>
-    • Room details match se pehle milenge
-  </div>
-
   <h2 class="sectionTitle">Select Match Type</h2>
 
   <div class="matchGrid">
-    
-    <div class="matchCard" onclick="openMatch()">
+    <div class="matchCard" onclick="openMatch('lonewolf')">
       <img src="https://i.postimg.cc/htcg0Zd2/file-000000009a8c7208a5891d21e8cc7c9c.png">
       <p>Lone wolf (1v1)</p>
     </div>
 
+    <div class="matchCard" onclick="openMatch('fullmap')">
+      <img src="https://i.postimg.cc/htcg0Zd2/file-000000009a8c7208a5891d21e8cc7c9c.png">
+      <p>Full map 2.0</p>
+    </div>
   </div>
+
 </div>
 
-<!-- MATCH PAGE -->
-<div id="matchPage">
+<!-- DETAILS PAGE -->
+<div id="detailsPage">
 
   <div class="backBtn" onclick="goBack()">← Back</div>
-  <h2>Lone Wolf 1v1</h2>
+  <h2 id="matchTitle">Match</h2>
 
-  <!-- MULTIPLE MATCHES -->
-  <div id="matchesContainer"></div>
+  <div id="matchList"></div>
 
 </div>
 
 <script>
 
-function openMatch() {
-  document.getElementById("home").style.display="none";
-  document.getElementById("matchPage").style.display="block";
-  loadMatches();
-}
+/* MATCH DATA (MULTIPLE SUPPORT) */
+const matches = {
+  lonewolf: [
+    {
+      name: "Match 1",
+      prize: 55,
+      kill: 0,
+      entry: 10,
+      type: "Solo",
+      version: "TPP",
+      map: "Lone Wolf"
+    },
+    {
+      name: "Match 2",
+      prize: 100,
+      kill: 10,
+      entry: 20,
+      type: "Solo",
+      version: "TPP",
+      map: "Lone Wolf"
+    }
+  ],
 
-function goBack() {
-  document.getElementById("home").style.display="block";
-  document.getElementById("matchPage").style.display="none";
-}
+  fullmap: [
+    {
+      name: "Match 1",
+      prize: 200,
+      kill: 20,
+      entry: 50,
+      type: "Squad",
+      version: "TPP",
+      map: "Bermuda"
+    }
+  ]
+};
 
-/* ADMIN MATCH DATA */
-const matches = [
-  {
-    id:1,
-    prize:55,
-    perKill:0,
-    entry:10,
-    type:"Solo",
-    version:"TPP",
-    map:"Lone Wolf"
-  },
-  {
-    id:2,
-    prize:100,
-    perKill:10,
-    entry:20,
-    type:"Solo",
-    version:"TPP",
-    map:"Lone Wolf"
-  }
-];
+/* OPEN MATCH */
+function openMatch(type) {
+  document.getElementById("home").style.display = "none";
+  document.getElementById("detailsPage").style.display = "block";
 
-/* LOAD MATCHES */
-function loadMatches() {
+  document.getElementById("matchTitle").innerText =
+    type === "lonewolf" ? "Lone Wolf 1v1" : "Full Map";
+
   let html = "";
-  matches.forEach(m => {
+
+  matches[type].forEach(m => {
     html += `
-    <div class="matchBox">
-      <h3>Match ${m.id}</h3>
+      <div class="matchBox">
+        <h3>${m.name}</h3>
 
-      <div class="row"><span>Prize Pool</span><span>₹ ${m.prize}</span></div>
-      <div class="row"><span>Per Kill</span><span>₹ ${m.perKill}</span></div>
-      <div class="row"><span>Entry Fee</span><span>₹ ${m.entry}</span></div>
-      <div class="row"><span>Type</span><span>${m.type}</span></div>
-      <div class="row"><span>Version</span><span>${m.version}</span></div>
-      <div class="row"><span>Map</span><span>${m.map}</span></div>
+        <div class="row"><span>Prize Pool</span><span>₹ ${m.prize}</span></div>
+        <div class="row"><span>Per Kill</span><span>₹ ${m.kill}</span></div>
+        <div class="row"><span>Entry Fee</span><span>₹ ${m.entry}</span></div>
+        <div class="row"><span>Type</span><span>${m.type}</span></div>
+        <div class="row"><span>Version</span><span>${m.version}</span></div>
+        <div class="row"><span>Map</span><span>${m.map}</span></div>
 
-      <div class="joinBtn">Join Match</div>
-    </div>
+        <button class="joinBtn">Join Match</button>
+      </div>
     `;
   });
 
-  document.getElementById("matchesContainer").innerHTML = html;
+  document.getElementById("matchList").innerHTML = html;
+}
+
+/* BACK */
+function goBack() {
+  document.getElementById("home").style.display = "block";
+  document.getElementById("detailsPage").style.display = "none";
 }
 
 </script>
