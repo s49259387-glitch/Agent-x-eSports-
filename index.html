@@ -1,86 +1,100 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Agent X eSports</title>
 
 <style>
-body{
-  margin:0;
-  font-family:sans-serif;
-  background:linear-gradient(#1e1f3a,#2c2f5a);
-  color:#fff;
+body {
+  margin: 0;
+  font-family: Arial;
+  background: linear-gradient(#1b1b3a,#2a2a5a);
+  color: white;
 }
 
 /* HEADER */
-.header{
-  display:flex;
-  justify-content:space-between;
-  padding:15px;
-  align-items:center;
+.header {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px;
+  font-size: 18px;
 }
 
-.walletBox{
-  border:2px solid cyan;
-  padding:6px 14px;
-  border-radius:20px;
+/* BANNER */
+.banner {
+  margin: 12px;
+  height: 180px;
+  border-radius: 20px;
+  overflow: hidden;
+}
+.banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-/* MATCH SCREEN */
-.matchScreen{
-  padding:15px;
+/* CARD GRID */
+.matchGrid {
+  display: grid;
+  grid-template-columns: repeat(2,1fr);
+  gap: 12px;
+  padding: 12px;
 }
 
-.matchCardNew{
-  background:#fff;
-  color:#000;
-  border-radius:15px;
-  padding:15px;
-  margin-bottom:20px;
-  box-shadow:0 0 15px cyan;
+.matchCard {
+  background: #3a3a6a;
+  border-radius: 15px;
+  overflow: hidden;
+  cursor: pointer;
 }
 
-/* TOP INFO */
-.matchTop{
-  display:flex;
-  gap:10px;
-  align-items:center;
+.matchCard img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
 }
 
-.matchTop img{
-  width:60px;
-  height:60px;
-  border-radius:10px;
+.matchCard p {
+  text-align: center;
+  padding: 10px;
 }
 
-/* GRID */
-.matchGridNew{
-  display:grid;
-  grid-template-columns:1fr 1fr 1fr;
-  text-align:center;
-  margin-top:15px;
-  gap:10px;
+/* DETAILS PAGE */
+.details {
+  display: none;
+  padding: 15px;
 }
 
-.matchGridNew div{
-  font-size:14px;
+.matchBox {
+  background: rgba(255,255,255,0.08);
+  padding: 15px;
+  border-radius: 20px;
+  margin-bottom: 15px;
+
+  /* GLOW EFFECT */
+  box-shadow: 0 0 15px cyan;
 }
 
-/* JOIN BUTTON */
-.joinBtn{
-  background:#000;
-  color:#fff;
-  padding:12px;
-  text-align:center;
-  border-radius:10px;
-  margin-top:15px;
-  font-weight:bold;
+.row {
+  display: flex;
+  justify-content: space-between;
+  margin: 6px 0;
 }
 
-/* BACK */
-.backBtn{
-  margin-bottom:10px;
-  display:block;
+.joinBtn {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: cyan;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.backBtn {
+  margin-bottom: 10px;
+  cursor: pointer;
 }
 
 </style>
@@ -91,132 +105,79 @@ body{
 <!-- HEADER -->
 <div class="header">
   <div>🔥 Agent X eSports</div>
-  <div class="walletBox">₹ <span id="topBalance">0</span></div>
-</div>
-
-<!-- MATCH SCREEN -->
-<div id="matchScreen" class="matchScreen" style="display:none">
-
-  <span class="backBtn" onclick="goBack()">← Back</span>
-
-  <h2 id="matchTitle"></h2>
-
-  <div id="matchList"></div>
-
+  <div>₹0</div>
 </div>
 
 <!-- HOME -->
 <div id="home">
 
-<h2 style="text-align:center;">Select Match Type</h2>
+  <div class="banner">
+    <img src="https://i.postimg.cc/htcg0Zd2/file-000000009a8c7208a5891d21e8cc7c9c.png">
+  </div>
 
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;padding:15px;">
+  <h2 style="text-align:center;">Select Match Type</h2>
 
-<div onclick="openMatch('Lone Wolf 1v1')">
-  <img src="https://i.postimg.cc/htcg0Zd2/file-000000009a8c7208a5891d21e8cc7c9c.png" style="width:100%;border-radius:10px;">
-  <p style="text-align:center;">Lone wolf (1v1)</p>
+  <div class="matchGrid">
+    <div class="matchCard" onclick="openDetails()">
+      <img src="https://i.postimg.cc/htcg0Zd2/file-000000009a8c7208a5891d21e8cc7c9c.png">
+      <p>Lone wolf (1v1)</p>
+    </div>
+
+    <div class="matchCard" onclick="openDetails()">
+      <img src="https://i.postimg.cc/htcg0Zd2/file-000000009a8c7208a5891d21e8cc7c9c.png">
+      <p>Full Map</p>
+    </div>
+  </div>
+
 </div>
 
-</div>
+<!-- DETAILS PAGE -->
+<div id="details" class="details">
+
+  <div class="backBtn" onclick="goBack()">⬅ Back</div>
+
+  <h2>Lone Wolf 1v1</h2>
+
+  <!-- MATCH 1 -->
+  <div class="matchBox">
+    <h3>Match 1</h3>
+
+    <div class="row"><span>Prize Pool</span><span>₹ 55</span></div>
+    <div class="row"><span>Per Kill</span><span>₹ 0</span></div>
+    <div class="row"><span>Entry Fee</span><span>₹ 10</span></div>
+    <div class="row"><span>Type</span><span>Solo</span></div>
+    <div class="row"><span>Version</span><span>TPP</span></div>
+    <div class="row"><span>Map</span><span>Lone Wolf</span></div>
+
+    <button class="joinBtn">Join Match</button>
+  </div>
+
+  <!-- MATCH 2 -->
+  <div class="matchBox">
+    <h3>Match 2</h3>
+
+    <div class="row"><span>Prize Pool</span><span>₹ 100</span></div>
+    <div class="row"><span>Per Kill</span><span>₹ 10</span></div>
+    <div class="row"><span>Entry Fee</span><span>₹ 20</span></div>
+    <div class="row"><span>Type</span><span>Solo</span></div>
+    <div class="row"><span>Version</span><span>TPP</span></div>
+    <div class="row"><span>Map</span><span>Lone Wolf</span></div>
+
+    <button class="joinBtn">Join Match</button>
+  </div>
 
 </div>
 
 <script>
-
-let matchesData = {
-"Lone Wolf 1v1":[
-{
-id:"#3165",
-time:"09/04/2026 02:45 pm",
-prize:55,
-perKill:0,
-entry:10,
-type:"Solo",
-version:"TPP",
-map:"Lone wolf",
-players:"2/2"
-},
-{
-id:"#3166",
-time:"09/04/2026 03:00 pm",
-prize:30,
-perKill:0,
-entry:10,
-type:"Solo",
-version:"TPP",
-map:"Lone wolf",
-players:"1/2"
-}
-]
-};
-
-function openMatch(type){
-document.getElementById("home").style.display="none";
-document.getElementById("matchScreen").style.display="block";
-
-document.getElementById("matchTitle").innerText = type;
-
-let container = document.getElementById("matchList");
-container.innerHTML = "";
-
-matchesData[type].forEach(match => {
-
-container.innerHTML += `
-<div class="matchCardNew">
-
-<div class="matchTop">
-<img src="https://i.postimg.cc/htcg0Zd2/file-000000009a8c7208a5891d21e8cc7c9c.png">
-<div>
-<b>${type} ( SKILL YES ) - Match ${match.id}</b><br>
-<small>${match.time}</small>
-</div>
-</div>
-
-<div class="matchGridNew">
-<div>PRIZE POOL<br><b>₹ ${match.prize}</b></div>
-<div>PER KILL<br><b>₹ ${match.perKill}</b></div>
-<div>ENTRY FEE<br><b>₹ ${match.entry}</b></div>
-
-<div>TYPE<br><b>${match.type}</b></div>
-<div>VERSION<br><b>${match.version}</b></div>
-<div>MAP<br><b>${match.map}</b></div>
-</div>
-
-<div style="margin-top:10px;">
-${match.players}
-</div>
-
-<div class="joinBtn" onclick="joinMatch(${match.entry})">
-JOIN MATCH
-</div>
-
-</div>
-`;
-
-});
-
+function openDetails(){
+  document.getElementById("home").style.display="none";
+  document.getElementById("details").style.display="block";
 }
 
 function goBack(){
-document.getElementById("home").style.display="block";
-document.getElementById("matchScreen").style.display="none";
+  document.getElementById("home").style.display="block";
+  document.getElementById("details").style.display="none";
 }
-
-function joinMatch(entry){
-let balance = parseInt(localStorage.getItem("wallet") || 0);
-
-if(balance < entry){
-alert("Insufficient Balance");
-return;
-}
-
-balance -= entry;
-localStorage.setItem("wallet", balance);
-document.getElementById("topBalance").innerText = balance;
-
-alert("Joined Successfully!");
-}
-
 </script>
 
 </body>
