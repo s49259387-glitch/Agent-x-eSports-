@@ -90,6 +90,7 @@ body {
   margin: 6px 0;
 }
 
+/* BUTTON */
 .joinBtn {
   width: 100%;
   padding: 12px;
@@ -101,6 +102,7 @@ body {
   cursor: pointer;
 }
 
+/* DETAILS BOX */
 .detailsBox {
   background: #222;
   padding: 10px;
@@ -109,16 +111,11 @@ body {
   display: none;
 }
 
+/* TIMER */
 .timer {
   text-align: center;
   margin-top: 10px;
   color: cyan;
-}
-
-/* EXTRA PAGES */
-.page {
-  display: none;
-  padding: 15px;
 }
 </style>
 
@@ -128,7 +125,7 @@ body {
 <!-- HEADER -->
 <div class="header">
   <div>🔥 Agent X eSports</div>
-  <div class="walletBox" id="walletAmount">₹ 0</div>
+  <div class="walletBox">₹ 0</div>
 </div>
 
 <!-- HOME -->
@@ -143,12 +140,12 @@ body {
   <div class="matchGrid">
 
     <div class="matchCard" onclick="openMatch('lonewolf')">
-      <img src="https://i.imgur.com/7yUvePI.jpg">
+      <img src="https://i.ibb.co/sdYpQbFt/Screenshot-20260408-232023.jpg">
       <p>Lone wolf (1v1)</p>
     </div>
 
     <div class="matchCard" onclick="openMatch('fullmap')">
-      <img src="https://i.imgur.com/7yUvePI.jpg">
+      <img src="https://i.ibb.co/sdYpQbFt/Screenshot-20260408-232023.jpg">
       <p>Full map 2.0</p>
     </div>
 
@@ -157,117 +154,70 @@ body {
 </div>
 
 <!-- MATCH DETAILS -->
-<div id="matchDetails" class="page">
-  <div onclick="goHome()">← Back</div>
+<div id="matchDetails" style="display:none; padding:15px;">
+  <div onclick="goBack()">← Back</div>
   <h2 id="matchTitle"></h2>
   <div id="matchList"></div>
 </div>
 
 <!-- WALLET PAGE -->
-<div id="walletPage" class="page">
+<div id="walletPage" style="display:none; padding:15px;">
   <div onclick="goHome()">← Back</div>
+
   <h2>Wallet</h2>
-  <p>Balance: <span id="walletText">₹ 0</span></p>
 
-  <button class="joinBtn" onclick="deposit()">Deposit ₹100</button>
-  <button class="joinBtn" onclick="withdraw()">Withdraw ₹50</button>
-</div>
+  <button class="joinBtn" onclick="deposit()">Deposit</button>
 
-<!-- SETTINGS PAGE -->
-<div id="settingsPage" class="page">
-  <div onclick="goHome()">← Back</div>
-  <h2>Settings</h2>
+  <!-- 🔥 QR ADD -->
+  <div id="qrBox" style="display:none; text-align:center; margin-top:15px;">
+    <p>Scan & Pay</p>
+    <img src="your-qr.png" style="width:200px; border-radius:10px;">
+    <p>UPI ID: 7985393071-k62e@ybl</p>
+    <p>Name: DURGESH SHARMA</p>
+  </div>
 
-  <p>Name: <span id="playerName">Player123</span></p>
-  <button class="joinBtn" onclick="changeName()">Change Name</button>
-
-  <button class="joinBtn" onclick="logout()">Logout</button>
 </div>
 
 <!-- NAVBAR -->
 <div class="navbar">
   <div onclick="goHome()">🏠 Home</div>
-  <div onclick="goMatches()">🎮 Matches</div>
-  <div onclick="goWallet()">💰 Wallet</div>
-  <div onclick="goSettings()">⚙️ Settings</div>
+  <div onclick="alert('Matches page coming soon')">🎮 Matches</div>
+  <div onclick="openWallet()">💰 Wallet</div>
+  <div onclick="alert('Settings coming soon')">⚙️ Settings</div>
 </div>
 
 <script>
 
-let wallet = 0;
-
-function showPage(page){
+function openMatch(type) {
   document.getElementById("home").style.display = "none";
-  document.getElementById("matchDetails").style.display = "none";
-  document.getElementById("walletPage").style.display = "none";
-  document.getElementById("settingsPage").style.display = "none";
-
-  document.getElementById(page).style.display = "block";
-}
-
-function goHome(){
-  showPage("home");
-}
-
-function goMatches(){
-  alert("Matches coming soon");
-}
-
-function goWallet(){
-  showPage("walletPage");
-}
-
-function goSettings(){
-  showPage("settingsPage");
-}
-
-function deposit(){
-  wallet += 100;
-  updateWallet();
-}
-
-function withdraw(){
-  wallet -= 50;
-  if(wallet < 0) wallet = 0;
-  updateWallet();
-}
-
-function updateWallet(){
-  document.getElementById("walletText").innerText = "₹ " + wallet;
-  document.getElementById("walletAmount").innerText = "₹ " + wallet;
-}
-
-function changeName(){
-  let name = prompt("Enter new name:");
-  if(name){
-    document.getElementById("playerName").innerText = name;
-  }
-}
-
-function logout(){
-  alert("Logged out");
-  window.location.href = "login.html";
-}
-
-/* MATCH SYSTEM SAME */
-function openMatch(type){
-  showPage("matchDetails");
+  document.getElementById("matchDetails").style.display = "block";
 
   let matches = [
-    {name:"Match 1", prize:55, kill:0, entry:10, type:"Solo", version:"TPP", map:"Lone Wolf"},
-    {name:"Match 2", prize:100, kill:10, entry:20, type:"Solo", version:"TPP", map:"Lone Wolf"}
+    {name:"Match 1", prize:55, kill:0, entry:10, type:"Solo", version:"TPP", map:"Lone Wolf"}
   ];
 
   let html = "";
 
-  matches.forEach((m,i)=>{
+  matches.forEach((m, i) => {
     html += `
     <div class="matchBox">
       <h3>${m.name}</h3>
-      <div class="row"><span>Prize</span><span>₹ ${m.prize}</span></div>
-      <div class="row"><span>Entry</span><span>₹ ${m.entry}</span></div>
+
+      <div class="row"><span>Prize Pool</span><span>₹ ${m.prize}</span></div>
+      <div class="row"><span>Per Kill</span><span>₹ ${m.kill}</span></div>
+      <div class="row"><span>Entry Fee</span><span>₹ ${m.entry}</span></div>
+
       <button class="joinBtn" onclick="joinMatch(${i})">Join Match</button>
+
       <div id="timer${i}" class="timer"></div>
+
+      <button class="joinBtn" onclick="showDetails(${i})">Details</button>
+
+      <div id="details${i}" class="detailsBox">
+        Room ID: 123456<br>
+        Password: 9999
+      </div>
+
     </div>
     `;
   });
@@ -275,18 +225,46 @@ function openMatch(type){
   document.getElementById("matchList").innerHTML = html;
 }
 
-function joinMatch(i){
-  let t = 10;
-  let div = document.getElementById("timer"+i);
+function goBack(){
+  document.getElementById("home").style.display = "block";
+  document.getElementById("matchDetails").style.display = "none";
+}
 
-  let x = setInterval(()=>{
-    div.innerText = "Starts in " + t;
-    t--;
-    if(t < 0){
-      clearInterval(x);
-      div.innerText = "Match Started!";
+function goHome(){
+  document.getElementById("walletPage").style.display = "none";
+  document.getElementById("matchDetails").style.display = "none";
+  document.getElementById("home").style.display = "block";
+}
+
+function openWallet(){
+  document.getElementById("home").style.display = "none";
+  document.getElementById("walletPage").style.display = "block";
+}
+
+/* 🔥 QR FUNCTION ADD */
+function deposit(){
+  let box = document.getElementById("qrBox");
+  box.style.display = box.style.display === "block" ? "none" : "block";
+}
+
+function joinMatch(i){
+  let time = 10;
+  let timerDiv = document.getElementById("timer"+i);
+
+  let interval = setInterval(()=>{
+    timerDiv.innerText = "Match starts in: " + time + "s";
+    time--;
+
+    if(time < 0){
+      clearInterval(interval);
+      timerDiv.innerText = "Match Started!";
     }
   },1000);
+}
+
+function showDetails(i){
+  let box = document.getElementById("details"+i);
+  box.style.display = box.style.display === "block" ? "none" : "block";
 }
 
 </script>
