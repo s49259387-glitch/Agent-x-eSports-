@@ -11,7 +11,7 @@ body {
   font-family: Arial;
   background: linear-gradient(#1d1f3a,#2b2e5a);
   color: white;
-  padding-bottom: 70px; /* navbar ke liye space */
+  padding-bottom: 70px;
 }
 
 .header {
@@ -113,10 +113,20 @@ body {
 
 <body>
 
+<!-- 🔐 LOGIN CHECK -->
+<script>
+if(!localStorage.getItem("login")){
+  window.location.href = "login.html";
+}
+</script>
+
 <!-- HEADER -->
 <div class="header">
   <div>🔥 Agent X eSports</div>
-  <div class="walletBox">₹ 0</div>
+  <div>
+    <span class="walletBox">₹ 0</span>
+    <span onclick="logout()" style="margin-left:10px;cursor:pointer;">🚪</span>
+  </div>
 </div>
 
 <!-- HOME -->
@@ -190,7 +200,7 @@ body {
     </div>
 
   </div>
-</div> <!-- ✅ YE MISSING THA (MAIN FIX) -->
+</div>
 
 <!-- NAVBAR -->
 <div class="navbar">
@@ -201,6 +211,11 @@ body {
 </div>
 
 <script>
+
+function logout(){
+  localStorage.removeItem("login");
+  window.location.href = "login.html";
+}
 
 function openMatch(){
   document.getElementById("home").style.display="none";
@@ -239,7 +254,6 @@ function toggleDetails(){
   box.style.display=box.style.display==="block"?"none":"block";
 }
 
-/* DEPOSIT SYSTEM */
 function toggleDeposit(){
   let box=document.getElementById("depositBox");
   box.style.display=box.style.display==="block"?"none":"block";
