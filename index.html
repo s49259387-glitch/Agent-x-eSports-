@@ -18,7 +18,6 @@ body {
   display: flex;
   justify-content: space-between;
   padding: 15px;
-  font-size: 18px;
 }
 
 .walletBox {
@@ -39,7 +38,7 @@ body {
   margin: 20px 0;
 }
 
-/* MATCH GRID */
+/* GRID */
 .matchGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -79,7 +78,7 @@ body {
   cursor: pointer;
 }
 
-/* MATCH DETAILS */
+/* MATCH BOX */
 .matchBox {
   background: #3a3d6b;
   border-radius: 20px;
@@ -166,35 +165,27 @@ body {
 
 <!-- MATCH DETAILS -->
 <div id="matchDetails" style="display:none; padding:15px;">
-
   <div onclick="goHome()">← Back</div>
-
   <h2 id="matchTitle"></h2>
-
   <div id="matchList"></div>
-
 </div>
 
-<!-- WALLET PAGE (NEW ADDED) -->
+<!-- WALLET PAGE -->
 <div id="walletPage" style="display:none; padding:15px;">
-
   <div onclick="goHome()">← Back</div>
-
   <h2 style="text-align:center;">Wallet</h2>
 
   <div class="matchBox">
     <h3>Balance: ₹ 0</h3>
-
     <button class="joinBtn" onclick="deposit()">Deposit</button>
     <button class="joinBtn" onclick="withdraw()">Withdraw</button>
   </div>
-
 </div>
 
 <!-- NAVBAR -->
 <div class="navbar">
   <div onclick="goHome()">🏠 Home</div>
-  <div onclick="openMatches()">🎮 Matches</div>
+  <div onclick="openMatch('lonewolf')">🎮 Matches</div>
   <div onclick="openWallet()">💰 Wallet</div>
   <div onclick="openSettings()">⚙️ Settings</div>
 </div>
@@ -208,12 +199,7 @@ function goHome(){
   document.getElementById("walletPage").style.display="none";
 }
 
-/* MATCH BUTTON */
-function openMatches(){
-  openMatch('lonewolf');
-}
-
-/* WALLET BUTTON */
+/* WALLET */
 function openWallet(){
   document.getElementById("home").style.display="none";
   document.getElementById("matchDetails").style.display="none";
@@ -225,7 +211,7 @@ function openSettings(){
   alert("Settings coming soon");
 }
 
-/* OPEN MATCH */
+/* MATCH */
 function openMatch(type){
   document.getElementById("home").style.display="none";
   document.getElementById("walletPage").style.display="none";
@@ -296,18 +282,18 @@ function showDetails(i){
   box.style.display = box.style.display==="block"?"none":"block";
 }
 
-/* WALLET ACTIONS */
+/* WALLET ACTION */
 function deposit(){
   let amount = prompt("Enter deposit amount:");
   if(amount){
-    alert("Deposit request of ₹"+amount+" submitted");
+    alert("Deposit request: ₹"+amount);
   }
 }
 
 function withdraw(){
   let amount = prompt("Enter withdraw amount:");
   if(amount){
-    alert("Withdraw request of ₹"+amount+" submitted");
+    alert("Withdraw request: ₹"+amount);
   }
 }
 
