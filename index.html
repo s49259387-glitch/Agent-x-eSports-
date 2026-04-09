@@ -175,6 +175,22 @@ body {
 
 </div>
 
+<!-- WALLET PAGE (NEW ADDED) -->
+<div id="walletPage" style="display:none; padding:15px;">
+
+  <div onclick="goHome()">← Back</div>
+
+  <h2 style="text-align:center;">Wallet</h2>
+
+  <div class="matchBox">
+    <h3>Balance: ₹ 0</h3>
+
+    <button class="joinBtn" onclick="deposit()">Deposit</button>
+    <button class="joinBtn" onclick="withdraw()">Withdraw</button>
+  </div>
+
+</div>
+
 <!-- NAVBAR -->
 <div class="navbar">
   <div onclick="goHome()">🏠 Home</div>
@@ -189,6 +205,7 @@ body {
 function goHome(){
   document.getElementById("home").style.display="block";
   document.getElementById("matchDetails").style.display="none";
+  document.getElementById("walletPage").style.display="none";
 }
 
 /* MATCH BUTTON */
@@ -198,10 +215,12 @@ function openMatches(){
 
 /* WALLET BUTTON */
 function openWallet(){
-  alert("Wallet balance: ₹ 0");
+  document.getElementById("home").style.display="none";
+  document.getElementById("matchDetails").style.display="none";
+  document.getElementById("walletPage").style.display="block";
 }
 
-/* SETTINGS BUTTON */
+/* SETTINGS */
 function openSettings(){
   alert("Settings coming soon");
 }
@@ -209,6 +228,7 @@ function openSettings(){
 /* OPEN MATCH */
 function openMatch(type){
   document.getElementById("home").style.display="none";
+  document.getElementById("walletPage").style.display="none";
   document.getElementById("matchDetails").style.display="block";
 
   let matches = [];
@@ -274,6 +294,21 @@ function joinMatch(i){
 function showDetails(i){
   let box=document.getElementById("details"+i);
   box.style.display = box.style.display==="block"?"none":"block";
+}
+
+/* WALLET ACTIONS */
+function deposit(){
+  let amount = prompt("Enter deposit amount:");
+  if(amount){
+    alert("Deposit request of ₹"+amount+" submitted");
+  }
+}
+
+function withdraw(){
+  let amount = prompt("Enter withdraw amount:");
+  if(amount){
+    alert("Withdraw request of ₹"+amount+" submitted");
+  }
 }
 
 </script>
