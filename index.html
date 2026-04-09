@@ -13,7 +13,6 @@ body {
   color: white;
 }
 
-/* HEADER */
 .header {
   display: flex;
   justify-content: space-between;
@@ -27,19 +26,16 @@ body {
   padding: 5px 12px;
 }
 
-/* BANNER */
 .banner img {
   width: 100%;
   border-radius: 15px;
 }
 
-/* TITLE */
 .sectionTitle {
   text-align: center;
   margin: 20px 0;
 }
 
-/* MATCH GRID */
 .matchGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -53,7 +49,6 @@ body {
   overflow: hidden;
 }
 
-/* FIX IMAGE */
 .matchCard img {
   width: 100%;
   height: 120px;
@@ -65,7 +60,6 @@ body {
   padding: 10px;
 }
 
-/* NAVBAR */
 .navbar {
   position: fixed;
   bottom: 0;
@@ -76,7 +70,6 @@ body {
   padding: 10px 0;
 }
 
-/* MATCH DETAILS */
 .matchBox {
   background: #3a3d6b;
   border-radius: 20px;
@@ -174,18 +167,13 @@ body {
 
 <!-- NAVBAR -->
 <div class="navbar">
-  <div>🏠 Home</div>
+  <div onclick="goBack()">🏠 Home</div>
   <div>🎮 Matches</div>
   <div>💰 Wallet</div>
   <div>⚙️ Settings</div>
 </div>
 
 <script>
-
-/* 🔐 LOGIN CHECK (ADDED) */
-if(!localStorage.getItem("user")){
-  window.location.href = "login.html";
-}
 
 /* MATCH SYSTEM */
 function openMatch(type) {
@@ -264,12 +252,6 @@ function joinMatch(i){
 function showDetails(i){
   let box = document.getElementById("details"+i);
   box.style.display = box.style.display === "block" ? "none" : "block";
-}
-
-/* 🔓 LOGOUT (ADDED) */
-function logout(){
-  localStorage.removeItem("user");
-  window.location.href = "login.html";
 }
 
 </script>
