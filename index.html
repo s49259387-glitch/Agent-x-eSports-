@@ -117,12 +117,6 @@ body {
   margin-top: 10px;
   color: cyan;
 }
-
-/* SETTINGS PAGE */
-.settingsPage {
-  display: none;
-  padding: 15px;
-}
 </style>
 
 </head>
@@ -136,6 +130,7 @@ body {
 
 <!-- HOME -->
 <div id="home">
+
   <div class="banner">
     <img src="https://i.postimg.cc/htcg0Zd2/file-000000009a8c7208a5891d21e8cc7c9c.png">
   </div>
@@ -143,88 +138,82 @@ body {
   <h2 class="sectionTitle">Select Match Type</h2>
 
   <div class="matchGrid">
+
     <div class="matchCard" onclick="openMatch('lonewolf')">
-      <img src="https://i.ibb.co/3m7R8hZ/lonewolf.jpg">
+      <img src="https://i.ibb.co/sdYpQbFt/Screenshot-20260408-232023.jpg">
       <p>Lone wolf (1v1)</p>
     </div>
 
     <div class="matchCard" onclick="openMatch('fullmap')">
-      <img src="https://i.ibb.co/3m7R8hZ/lonewolf.jpg">
+      <img src="https://i.ibb.co/sdYpQbFt/Screenshot-20260408-232023.jpg">
       <p>Full map 2.0</p>
     </div>
+
+    <div class="matchCard" onclick="openMatch('lonewolf')">
+      <img src="https://i.ibb.co/sdYpQbFt/Screenshot-20260408-232023.jpg">
+      <p>Lone wolf (1v1)</p>
+    </div>
+
+    <div class="matchCard" onclick="openMatch('fullmap')">
+      <img src="https://i.ibb.co/sdYpQbFt/Screenshot-20260408-232023.jpg">
+      <p>Full map 2.0</p>
+    </div>
+
   </div>
+
 </div>
 
 <!-- MATCH DETAILS -->
 <div id="matchDetails" style="display:none; padding:15px;">
+
   <div onclick="goBack()">← Back</div>
+
   <h2 id="matchTitle"></h2>
+
   <div id="matchList"></div>
-</div>
 
-<!-- SETTINGS -->
-<div id="settings" class="settingsPage">
-  <div onclick="goHome()">← Back</div>
-  <h2>Settings</h2>
-
-  <button class="joinBtn" onclick="logout()">Logout</button>
 </div>
 
 <!-- NAVBAR -->
 <div class="navbar">
-  <div onclick="goHome()">🏠 Home</div>
-  <div onclick="goMatches()">🎮 Matches</div>
-  <div onclick="goWallet()">💰 Wallet</div>
-  <div onclick="openSettings()">⚙️ Settings</div>
+  <div>🏠 Home</div>
+  <div>🎮 Matches</div>
+  <div>💰 Wallet</div>
+  <div>⚙️ Settings</div>
 </div>
 
 <script>
 
-/* 🔐 LOGIN CHECK */
+/* 🔐 LOGIN CHECK ADD */
 if(!localStorage.getItem("user")){
   window.location.href = "login.html";
 }
 
-/* NAVIGATION */
-function goHome(){
-  document.getElementById("home").style.display = "block";
-  document.getElementById("matchDetails").style.display = "none";
-  document.getElementById("settings").style.display = "none";
-}
-
-function goMatches(){
-  alert("Select any match from home");
-}
-
-function goWallet(){
-  alert("Wallet coming soon");
-}
-
-function openSettings(){
-  document.getElementById("home").style.display = "none";
-  document.getElementById("matchDetails").style.display = "none";
-  document.getElementById("settings").style.display = "block";
-}
-
-/* LOGOUT */
-function logout(){
-  localStorage.removeItem("user");
-  window.location.href = "login.html";
-}
-
-/* MATCH SYSTEM */
-function openMatch(type){
+function openMatch(type) {
   document.getElementById("home").style.display = "none";
   document.getElementById("matchDetails").style.display = "block";
 
-  let matches = [
-    {name:"Match 1", prize:55, kill:0, entry:10},
-    {name:"Match 2", prize:100, kill:10, entry:20}
-  ];
+  let matches = [];
+
+  if(type === "lonewolf"){
+    document.getElementById("matchTitle").innerText = "Lone Wolf 1v1";
+
+    matches = [
+      {name:"Match 1", prize:55, kill:0, entry:10},
+      {name:"Match 2", prize:100, kill:10, entry:20}
+    ];
+
+  } else {
+    document.getElementById("matchTitle").innerText = "Full Map";
+
+    matches = [
+      {name:"Match 1", prize:200, kill:20, entry:50}
+    ];
+  }
 
   let html = "";
 
-  matches.forEach((m,i)=>{
+  matches.forEach((m, i) => {
     html += `
     <div class="matchBox">
       <h3>${m.name}</h3>
@@ -243,6 +232,7 @@ function openMatch(type){
         Room ID: 123456<br>
         Password: 9999
       </div>
+
     </div>
     `;
   });
@@ -251,21 +241,22 @@ function openMatch(type){
 }
 
 function goBack(){
-  goHome();
+  document.getElementById("home").style.display = "block";
+  document.getElementById("matchDetails").style.display = "none";
 }
 
 /* JOIN */
 function joinMatch(i){
   let time = 10;
-  let timer = document.getElementById("timer"+i);
+  let timerDiv = document.getElementById("timer"+i);
 
-  let x = setInterval(()=>{
-    timer.innerText = "Match starts in: "+time+"s";
+  let interval = setInterval(()=>{
+    timerDiv.innerText = "Match starts in: " + time + "s";
     time--;
 
     if(time < 0){
-      clearInterval(x);
-      timer.innerText = "Match Started!";
+      clearInterval(interval);
+      timerDiv.innerText = "Match Started!";
     }
   },1000);
 }
@@ -274,6 +265,12 @@ function joinMatch(i){
 function showDetails(i){
   let box = document.getElementById("details"+i);
   box.style.display = box.style.display === "block" ? "none" : "block";
+}
+
+/* 🔓 LOGOUT FUNCTION ADD */
+function logout(){
+  localStorage.removeItem("user");
+  window.location.href = "login.html";
 }
 
 </script>
