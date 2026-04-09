@@ -24,6 +24,7 @@ body{
   width:85%;
   max-width:350px;
   text-align:center;
+  box-shadow:0 0 20px cyan;
 }
 
 input{
@@ -32,6 +33,7 @@ input{
   margin:10px 0;
   border:none;
   border-radius:10px;
+  outline:none;
 }
 
 button{
@@ -41,6 +43,7 @@ button{
   border:none;
   border-radius:10px;
   font-weight:bold;
+  cursor:pointer;
 }
 </style>
 </head>
@@ -48,36 +51,38 @@ button{
 <body>
 
 <div class="box">
-  <h2>Agent X Login</h2>
+  <h2>🔥 Agent X Login</h2>
 
-  <input type="text" id="user" placeholder="Username">
-  <input type="password" id="pass" placeholder="Password">
+  <input type="text" id="user" placeholder="Enter Email">
+  <input type="password" id="pass" placeholder="Enter Password">
 
   <button onclick="login()">Login</button>
 </div>
+
 <script>
+
 function login(){
-  let u = document.getElementById("username").value;
-  let p = document.getElementById("password").value;
+  let u = document.getElementById("user").value;
+  let p = document.getElementById("pass").value;
 
   if(u=="" || p==""){
-    alert("Fill all fields");
+    alert("Fill all fields ❌");
     return;
   }
 
-  // 👇 ADMIN LOGIN (change kar sakte ho)
-  if(u === "satyam@gmail.com" && p === "1234")
+  // ✅ ADMIN LOGIN
+  if(u === "satyam@gmail.com" && p === "1234"){
     localStorage.setItem("login", "yes");
     localStorage.setItem("role", "admin");
+    alert("Admin Login Successful ✅");
     window.location.href = "index.html";
   } 
-  // 👇 USER LOGIN
+  // ❌ WRONG LOGIN
   else{
-    localStorage.setItem("login", "yes");
-    localStorage.setItem("role", "user");
-    window.location.href = "index.html";
+    alert("Wrong Email or Password ❌");
   }
 }
+
 </script>
 
 </body>
