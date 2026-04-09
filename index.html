@@ -97,6 +97,11 @@ body {
   margin-top: 10px;
   font-weight: bold;
 }
+
+.timer {
+  margin-top: 5px;
+  color: yellow;
+}
 </style>
 
 </head>
@@ -165,6 +170,8 @@ body {
 <!-- SCRIPT -->
 <script>
 
+let joinedMatch = null;
+
 function openMatch(type) {
   document.getElementById("home").style.display = "none";
   document.getElementById("matchDetails").style.display = "block";
@@ -175,15 +182,51 @@ function openMatch(type) {
     document.getElementById("matchTitle").innerText = "Lone Wolf 1v1";
 
     matches = [
-      {name:"Match 1", prize:55, kill:0, entry:10, type:"Solo", version:"TPP", map:"Lone Wolf"},
-      {name:"Match 2", prize:100, kill:10, entry:20, type:"Solo", version:"TPP", map:"Lone Wolf"}
+      {
+        id:1,
+        name:"Match 1",
+        prize:55,
+        kill:0,
+        entry:10,
+        type:"Solo",
+        version:"TPP",
+        map:"Lone Wolf",
+        time:"02:45 PM",
+        room:"123456",
+        pass:"abc123"
+      },
+      {
+        id:2,
+        name:"Match 2",
+        prize:100,
+        kill:10,
+        entry:20,
+        type:"Solo",
+        version:"TPP",
+        map:"Lone Wolf",
+        time:"03:00 PM",
+        room:"789012",
+        pass:"xyz789"
+      }
     ];
 
   } else {
     document.getElementById("matchTitle").innerText = "Full Map";
 
     matches = [
-      {name:"Match 1", prize:200, kill:20, entry:50, type:"Squad", version:"TPP", map:"Bermuda"}
+      {
+        id:3,
+        name:"Match 1",
+        prize:200,
+        kill:20,
+        entry:50,
+        type:"Squad",
+        version:"TPP",
+        map:"Bermuda",
+        time:"04:00 PM",
+        room:"999999",
+        pass:"pass999"
+      }
     ];
   }
 
@@ -194,6 +237,7 @@ function openMatch(type) {
     <div class="matchBox">
       <h3>${m.name}</h3>
 
+      <div class="row"><span>Time</span><span>${m.time}</span></div>
       <div class="row"><span>Prize Pool</span><span>₹ ${m.prize}</span></div>
       <div class="row"><span>Per Kill</span><span>₹ ${m.kill}</span></div>
       <div class="row"><span>Entry Fee</span><span>₹ ${m.entry}</span></div>
@@ -201,12 +245,53 @@ function openMatch(type) {
       <div class="row"><span>Version</span><span>${m.version}</span></div>
       <div class="row"><span>Map</span><span>${m.map}</span></div>
 
-      <button class="joinBtn">Join Match</button>
+      <div id="timer${m.id}" class="timer"></div>
+
+      <button class="joinBtn" onclick="joinMatch(${m.id})">Join Match</button>
+
+      <button class="joinBtn" style="background:#555;" onclick="toggleDetails(${m.id}, '${m.room}', '${m.pass}')">Details</button>
+
+      <div id="details${m.id}" style="display:none;margin-top:10px;"></div>
+
     </div>
     `;
   });
 
   document.getElementById("matchList").innerHTML = html;
+}
+
+function joinMatch(id) {
+  if(joinedMatch !== null){
+    alert("Already joined a match!");
+    return;
+  }
+
+  joinedMatch = id;
+
+  let time = 60;
+
+  let timer = setInterval(() => {
+    time--;
+
+    document.getElementById("timer"+id).innerText = "Starts in: " + time + " sec";
+
+    if(time <= 0){
+      clearInterval(timer);
+      document.getElementById("timer"+id).innerText = "Match Started!";
+    }
+
+  },1000);
+}
+
+function toggleDetails(id, room, pass) {
+  let box = document.getElementById("details"+id);
+
+  if(box.style.display === "none"){
+    box.style.display = "block";
+    box.innerHTML = "Room ID: " + room + "<br>Password: " + pass;
+  } else {
+    box.style.display = "none";
+  }
 }
 
 function goBack(){
