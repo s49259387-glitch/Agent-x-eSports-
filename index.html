@@ -113,7 +113,7 @@ body {
 
 <body>
 
-<!-- 🔐 LOGIN CHECK -->
+<!-- LOGIN CHECK -->
 <script>
 if(localStorage.getItem("login") !== "yes"){
   window.location.href = "login.html";
@@ -202,13 +202,21 @@ if(localStorage.getItem("login") !== "yes"){
   </div>
 </div>
 
+<!-- ADMIN PANEL -->
+<div id="adminPanel" style="display:none; padding:15px;">
+  <div onclick="goHome()">← Back</div>
+
+  <h2>Admin Panel</h2>
+
+  <div id="requestList"></div>
+</div>
+
 <!-- NAVBAR -->
 <div class="navbar">
   <div onclick="goHome()">🏠 Home</div>
   <div onclick="openMatch()">🎮 Matches</div>
   <div onclick="openWallet()">💰 Wallet</div>
 
-  <!-- 👇 ADMIN BUTTON -->
   <div id="adminPanelBtn" onclick="openAdmin()" style="display:none;">👑 Admin</div>
 
   <div onclick="alert('Settings coming soon')">⚙️ Settings</div>
@@ -222,7 +230,6 @@ function logout(){
   window.location.href = "login.html";
 }
 
-/* 👇 ADMIN SHOW LOGIC */
 let role = localStorage.getItem("role");
 
 window.onload = function(){
@@ -232,25 +239,71 @@ window.onload = function(){
 };
 
 function openAdmin(){
-  alert("Admin Panel Coming Soon 🔥");
+  document.getElementById("home").style.display="none";
+  document.getElementById("matchDetails").style.display="none";
+  document.getElementById("walletPage").style.display="none";
+  document.getElementById("adminPanel").style.display="block";
+
+  loadRequests();
+}
+
+function loadRequests(){
+  let data = JSON.parse(localStorage.getItem("deposit_requests")) || [];
+  let box = document.getElementById("requestList");
+
+  box.innerHTML = "";
+
+  if(data.length === 0){
+    box.innerHTML = "<p>No Requests</p>";
+    return;
+  }
+
+  data.forEach((item, index)=>{
+    box.innerHTML += `
+      <div style="background:#3a3d6b; padding:10px; margin:10px 0; border-radius:10px;">
+        <p>Amount: ₹${item.amount}</p>
+        <p>Status: ${item.status}</p>
+
+        <button onclick="approve(${index})">✅ Approve</button>
+        <button onclick="reject(${index})">❌ Reject</button>
+      </div>
+    `;
+  });
+}
+
+function approve(index){
+  let data = JSON.parse(localStorage.getItem("deposit_requests"));
+  data[index].status = "approved";
+  localStorage.setItem("deposit_requests", JSON.stringify(data));
+  loadRequests();
+}
+
+function reject(index){
+  let data = JSON.parse(localStorage.getItem("deposit_requests"));
+  data[index].status = "rejected";
+  localStorage.setItem("deposit_requests", JSON.stringify(data));
+  loadRequests();
 }
 
 function openMatch(){
   document.getElementById("home").style.display="none";
   document.getElementById("matchDetails").style.display="block";
   document.getElementById("walletPage").style.display="none";
+  document.getElementById("adminPanel").style.display="none";
 }
 
 function goHome(){
   document.getElementById("home").style.display="block";
   document.getElementById("matchDetails").style.display="none";
   document.getElementById("walletPage").style.display="none";
+  document.getElementById("adminPanel").style.display="none";
 }
 
 function openWallet(){
   document.getElementById("home").style.display="none";
   document.getElementById("matchDetails").style.display="none";
   document.getElementById("walletPage").style.display="block";
+  document.getElementById("adminPanel").style.display="none";
 }
 
 function joinMatch(){
