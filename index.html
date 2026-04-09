@@ -5,108 +5,82 @@
 <title>Agent X eSports</title>
 
 <style>
-
-body {
-  margin: 0;
-  font-family: sans-serif;
-  background: linear-gradient(#1e1e3f,#2b2b5f);
-  color: white;
+body{
+  margin:0;
+  font-family:sans-serif;
+  background:linear-gradient(#1e1f3a,#2c2f5a);
+  color:#fff;
 }
 
 /* HEADER */
-.header {
-  display: flex;
-  justify-content: space-between;
-  padding: 12px;
-  font-size: 18px;
+.header{
+  display:flex;
+  justify-content:space-between;
+  padding:15px;
+  align-items:center;
 }
 
-.walletBox {
-  border: 2px solid cyan;
-  padding: 5px 12px;
-  border-radius: 20px;
+.walletBox{
+  border:2px solid cyan;
+  padding:6px 14px;
+  border-radius:20px;
 }
 
-/* BANNER */
-.banner {
-  margin: 12px;
-  height: 180px;
-  border-radius: 20px;
-  overflow: hidden;
+/* MATCH SCREEN */
+.matchScreen{
+  padding:15px;
 }
 
-.banner img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.matchCardNew{
+  background:#fff;
+  color:#000;
+  border-radius:15px;
+  padding:15px;
+  margin-bottom:20px;
+  box-shadow:0 0 15px cyan;
 }
 
-/* INSTRUCTIONS */
-.instructionsBox {
-  margin: 15px;
-  padding: 14px;
-  background: rgba(255,255,255,0.08);
-  border-radius: 15px;
-  box-shadow: 0 0 12px cyan;
+/* TOP INFO */
+.matchTop{
+  display:flex;
+  gap:10px;
+  align-items:center;
 }
 
-/* TITLE */
-.sectionTitle {
-  text-align: center;
-  font-size: 22px;
-  margin-top: 10px;
+.matchTop img{
+  width:60px;
+  height:60px;
+  border-radius:10px;
 }
 
-/* MATCH CARD NEW */
-.matchDetailsCard {
-  background: rgba(255,255,255,0.08);
-  border-radius: 18px;
-  padding: 16px;
-  margin: 15px;
-  color: #fff;
-  box-shadow: 0 0 15px cyan;
-  animation: glowPulse 2s infinite alternate;
+/* GRID */
+.matchGridNew{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  text-align:center;
+  margin-top:15px;
+  gap:10px;
 }
 
-@keyframes glowPulse {
-  from { box-shadow: 0 0 10px cyan; }
-  to { box-shadow: 0 0 20px cyan; }
+.matchGridNew div{
+  font-size:14px;
 }
 
-.matchRow {
-  display: flex;
-  justify-content: space-between;
-  margin: 10px 0;
+/* JOIN BUTTON */
+.joinBtn{
+  background:#000;
+  color:#fff;
+  padding:12px;
+  text-align:center;
+  border-radius:10px;
+  margin-top:15px;
+  font-weight:bold;
 }
 
-.matchTitle {
-  font-size: 18px;
-  font-weight: bold;
-}
-
-.joinBtn {
-  width: 100%;
-  padding: 10px;
-  border-radius: 10px;
-  background: cyan;
-  border: none;
-  font-weight: bold;
-  margin-top: 10px;
-}
-
-/* BOTTOM NAV */
-.bottomNav {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  display: flex;
-  justify-content: space-around;
-  background: #1e1e3f;
-  padding: 10px 0;
-}
-
-.bottomNav div {
-  text-align: center;
+/* BACK */
+.backBtn{
+  margin-bottom:10px;
+  display:block;
 }
 
 </style>
@@ -120,150 +94,128 @@ body {
   <div class="walletBox">₹ <span id="topBalance">0</span></div>
 </div>
 
-<!-- HOME -->
-<div id="home">
+<!-- MATCH SCREEN -->
+<div id="matchScreen" class="matchScreen" style="display:none">
 
-  <!-- BANNER -->
-  <div class="banner">
-    <img src="https://i.postimg.cc/htcg0Zd2/file-000000009a8c7208a5891d21e8cc7c9c.png">
-  </div>
+  <span class="backBtn" onclick="goBack()">← Back</span>
 
-  <!-- INSTRUCTIONS -->
-  <div class="instructionsBox">
-    <b>Instructions:</b><br>
-    • Wallet me balance hona chahiye<br>
-    • No refund<br>
-    • Room details match se pehle milenge
-  </div>
+  <h2 id="matchTitle"></h2>
 
-  <h2 class="sectionTitle">Select Match Type</h2>
-
-  <!-- MATCH LIST -->
   <div id="matchList"></div>
 
 </div>
 
-<!-- BOTTOM NAV -->
-<div class="bottomNav">
-  <div>🏠<br>Home</div>
-  <div>🎮<br>Matches</div>
-  <div onclick="openWallet()">💰<br>Wallet</div>
-  <div>⚙️<br>Settings</div>
+<!-- HOME -->
+<div id="home">
+
+<h2 style="text-align:center;">Select Match Type</h2>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;padding:15px;">
+
+<div onclick="openMatch('Lone Wolf 1v1')">
+  <img src="https://i.postimg.cc/htcg0Zd2/file-000000009a8c7208a5891d21e8cc7c9c.png" style="width:100%;border-radius:10px;">
+  <p style="text-align:center;">Lone wolf (1v1)</p>
+</div>
+
+</div>
+
 </div>
 
 <script>
 
-// WALLET INIT
-let balance = localStorage.getItem("balance");
-if (!balance) {
-  balance = 0;
-  localStorage.setItem("balance", 0);
+let matchesData = {
+"Lone Wolf 1v1":[
+{
+id:"#3165",
+time:"09/04/2026 02:45 pm",
+prize:55,
+perKill:0,
+entry:10,
+type:"Solo",
+version:"TPP",
+map:"Lone wolf",
+players:"2/2"
+},
+{
+id:"#3166",
+time:"09/04/2026 03:00 pm",
+prize:30,
+perKill:0,
+entry:10,
+type:"Solo",
+version:"TPP",
+map:"Lone wolf",
+players:"1/2"
 }
+]
+};
+
+function openMatch(type){
+document.getElementById("home").style.display="none";
+document.getElementById("matchScreen").style.display="block";
+
+document.getElementById("matchTitle").innerText = type;
+
+let container = document.getElementById("matchList");
+container.innerHTML = "";
+
+matchesData[type].forEach(match => {
+
+container.innerHTML += `
+<div class="matchCardNew">
+
+<div class="matchTop">
+<img src="https://i.postimg.cc/htcg0Zd2/file-000000009a8c7208a5891d21e8cc7c9c.png">
+<div>
+<b>${type} ( SKILL YES ) - Match ${match.id}</b><br>
+<small>${match.time}</small>
+</div>
+</div>
+
+<div class="matchGridNew">
+<div>PRIZE POOL<br><b>₹ ${match.prize}</b></div>
+<div>PER KILL<br><b>₹ ${match.perKill}</b></div>
+<div>ENTRY FEE<br><b>₹ ${match.entry}</b></div>
+
+<div>TYPE<br><b>${match.type}</b></div>
+<div>VERSION<br><b>${match.version}</b></div>
+<div>MAP<br><b>${match.map}</b></div>
+</div>
+
+<div style="margin-top:10px;">
+${match.players}
+</div>
+
+<div class="joinBtn" onclick="joinMatch(${match.entry})">
+JOIN MATCH
+</div>
+
+</div>
+`;
+
+});
+
+}
+
+function goBack(){
+document.getElementById("home").style.display="block";
+document.getElementById("matchScreen").style.display="none";
+}
+
+function joinMatch(entry){
+let balance = parseInt(localStorage.getItem("wallet") || 0);
+
+if(balance < entry){
+alert("Insufficient Balance");
+return;
+}
+
+balance -= entry;
+localStorage.setItem("wallet", balance);
 document.getElementById("topBalance").innerText = balance;
 
-// MATCH DATA
-const matches = [
-  {
-    title: "Match 1",
-    prize: 55,
-    perKill: 0,
-    entry: 10,
-    type: "Solo",
-    version: "TPP",
-    map: "Lone Wolf"
-  },
-  {
-    title: "Match 2",
-    prize: 100,
-    perKill: 5,
-    entry: 20,
-    type: "Solo",
-    version: "TPP",
-    map: "Bermuda"
-  }
-];
-
-// LOAD MATCHES
-function loadMatches() {
-  let html = "";
-
-  matches.forEach(match => {
-    html += `
-      <div class="matchDetailsCard">
-
-        <div class="matchTitle">${match.title}</div>
-
-        <div class="matchRow">
-          <span>Prize Pool</span>
-          <span>₹ ${match.prize}</span>
-        </div>
-
-        <div class="matchRow">
-          <span>Per Kill</span>
-          <span>₹ ${match.perKill}</span>
-        </div>
-
-        <div class="matchRow">
-          <span>Entry Fee</span>
-          <span>₹ ${match.entry}</span>
-        </div>
-
-        <div class="matchRow">
-          <span>Type</span>
-          <span>${match.type}</span>
-        </div>
-
-        <div class="matchRow">
-          <span>Version</span>
-          <span>${match.version}</span>
-        </div>
-
-        <div class="matchRow">
-          <span>Map</span>
-          <span>${match.map}</span>
-        </div>
-
-        <button class="joinBtn" onclick="joinMatch(${match.entry})">
-          Join Match
-        </button>
-
-      </div>
-    `;
-  });
-
-  document.getElementById("matchList").innerHTML = html;
+alert("Joined Successfully!");
 }
-
-// JOIN MATCH
-function joinMatch(entryFee) {
-  let balance = parseInt(localStorage.getItem("balance")) || 0;
-
-  if (balance >= entryFee) {
-    balance -= entryFee;
-    localStorage.setItem("balance", balance);
-
-    alert("Match Joined ✅");
-
-    document.getElementById("topBalance").innerText = balance;
-
-  } else {
-    alert("Insufficient Balance ❌");
-  }
-}
-
-// WALLET OPEN
-function openWallet() {
-  let amount = prompt("Enter amount to add:");
-  if (amount) {
-    let bal = parseInt(localStorage.getItem("balance")) || 0;
-    bal += parseInt(amount);
-    localStorage.setItem("balance", bal);
-    document.getElementById("topBalance").innerText = bal;
-  }
-}
-
-// INIT
-loadMatches();
 
 </script>
 
