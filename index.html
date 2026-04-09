@@ -13,7 +13,6 @@ body {
   color: white;
 }
 
-/* HEADER */
 .header {
   display: flex;
   justify-content: space-between;
@@ -27,19 +26,16 @@ body {
   padding: 5px 12px;
 }
 
-/* BANNER */
 .banner img {
   width: 100%;
   border-radius: 15px;
 }
 
-/* TITLE */
 .sectionTitle {
   text-align: center;
   margin: 20px 0;
 }
 
-/* MATCH GRID */
 .matchGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -64,7 +60,6 @@ body {
   padding: 10px;
 }
 
-/* NAVBAR */
 .navbar {
   position: fixed;
   bottom: 0;
@@ -75,7 +70,6 @@ body {
   padding: 10px 0;
 }
 
-/* MATCH DETAILS */
 .matchBox {
   background: #3a3d6b;
   border-radius: 20px;
@@ -90,7 +84,6 @@ body {
   margin: 6px 0;
 }
 
-/* BUTTON */
 .joinBtn {
   width: 100%;
   padding: 12px;
@@ -99,10 +92,8 @@ body {
   border-radius: 10px;
   margin-top: 10px;
   font-weight: bold;
-  cursor: pointer;
 }
 
-/* DETAILS BOX */
 .detailsBox {
   background: #222;
   padding: 10px;
@@ -111,15 +102,14 @@ body {
   display: none;
 }
 
-/* TIMER */
 .timer {
   text-align: center;
   margin-top: 10px;
   color: cyan;
 }
 </style>
-
 </head>
+
 <body>
 
 <!-- HEADER -->
@@ -130,7 +120,6 @@ body {
 
 <!-- HOME -->
 <div id="home">
-
   <div class="banner">
     <img src="https://i.postimg.cc/htcg0Zd2/file-000000009a8c7208a5891d21e8cc7c9c.png">
   </div>
@@ -138,176 +127,141 @@ body {
   <h2 class="sectionTitle">Select Match Type</h2>
 
   <div class="matchGrid">
-
-    <div class="matchCard" onclick="openMatch('lonewolf')">
+    <div class="matchCard" onclick="openMatch()">
       <img src="https://i.ibb.co/sdYpQbFt/Screenshot-20260408-232023.jpg">
       <p>Lone wolf (1v1)</p>
     </div>
 
-    <div class="matchCard" onclick="openMatch('fullmap')">
+    <div class="matchCard" onclick="openMatch()">
       <img src="https://i.ibb.co/sdYpQbFt/Screenshot-20260408-232023.jpg">
       <p>Full map 2.0</p>
     </div>
-
   </div>
-
 </div>
 
 <!-- MATCH DETAILS -->
 <div id="matchDetails" style="display:none; padding:15px;">
-  <div onclick="goBack()">← Back</div>
-  <h2 id="matchTitle"></h2>
-  <div id="matchList"></div>
+  <div onclick="goHome()">← Back</div>
+
+  <div class="matchBox">
+    <h3>Match 1</h3>
+
+    <div class="row"><span>Prize Pool</span><span>₹ 55</span></div>
+    <div class="row"><span>Per Kill</span><span>₹ 0</span></div>
+    <div class="row"><span>Entry Fee</span><span>₹ 10</span></div>
+
+    <button class="joinBtn" onclick="joinMatch()">Join Match</button>
+
+    <div id="timer" class="timer"></div>
+
+    <button class="joinBtn" onclick="toggleDetails()">Details</button>
+
+    <div id="details" class="detailsBox">
+      Room ID: 123456<br>
+      Password: 9999
+    </div>
+  </div>
 </div>
 
-<!-- WALLET PAGE -->
+<!-- WALLET -->
 <div id="walletPage" style="display:none; padding:15px;">
   <div onclick="goHome()">← Back</div>
 
   <h2>Wallet</h2>
 
-  <button class="joinBtn" onclick="openDeposit()">Deposit</button>
+  <button class="joinBtn" onclick="toggleDeposit()">Deposit</button>
 
-  <!-- 🔥 NEW DEPOSIT FLOW -->
   <div id="depositBox" style="display:none; text-align:center; margin-top:15px;">
 
     <input type="number" id="amount" placeholder="Enter Amount"
     style="width:80%; padding:10px; border-radius:8px; border:none;">
 
-    <!-- QR -->
     <div id="qrBox" style="display:none; margin-top:15px;">
       <p>Scan & Pay</p>
 
-      <img src="data:image/jpeg;base64,
-/9j/4AAQSkZJRgABAQAAAQABAAD... (shortened)
-" style="width:200px; border-radius:10px;">
+      <img src="https://i.postimg.cc/PrJF6wH6/Screenshot-20260409-163237.jpg"
+      style="width:200px; border-radius:10px;">
 
       <p>UPI ID: 7985393071-k62e@ybl</p>
       <p>Name: DURGESH SHARMA</p>
 
-      <button class="joinBtn" onclick="sendDeposit()" style="margin-top:10px;">
-        Send Request
-      </button>
+      <button class="joinBtn" onclick="sendDeposit()">Send Request</button>
     </div>
 
   </div>
-
 </div>
 
 <!-- NAVBAR -->
 <div class="navbar">
   <div onclick="goHome()">🏠 Home</div>
-  <div onclick="alert('Matches page coming soon')">🎮 Matches</div>
+  <div onclick="openMatch()">🎮 Matches</div>
   <div onclick="openWallet()">💰 Wallet</div>
   <div onclick="alert('Settings coming soon')">⚙️ Settings</div>
 </div>
 
 <script>
 
-function openMatch(type) {
-  document.getElementById("home").style.display = "none";
-  document.getElementById("matchDetails").style.display = "block";
-
-  let matches = [
-    {name:"Match 1", prize:55, kill:0, entry:10, type:"Solo", version:"TPP", map:"Lone Wolf"}
-  ];
-
-  let html = "";
-
-  matches.forEach((m, i) => {
-    html += `
-    <div class="matchBox">
-      <h3>${m.name}</h3>
-
-      <div class="row"><span>Prize Pool</span><span>₹ ${m.prize}</span></div>
-      <div class="row"><span>Per Kill</span><span>₹ ${m.kill}</span></div>
-      <div class="row"><span>Entry Fee</span><span>₹ ${m.entry}</span></div>
-
-      <button class="joinBtn" onclick="joinMatch(${i})">Join Match</button>
-
-      <div id="timer${i}" class="timer"></div>
-
-      <button class="joinBtn" onclick="showDetails(${i})">Details</button>
-
-      <div id="details${i}" class="detailsBox">
-        Room ID: 123456<br>
-        Password: 9999
-      </div>
-
-    </div>
-    `;
-  });
-
-  document.getElementById("matchList").innerHTML = html;
-}
-
-function goBack(){
-  document.getElementById("home").style.display = "block";
-  document.getElementById("matchDetails").style.display = "none";
+function openMatch(){
+  document.getElementById("home").style.display="none";
+  document.getElementById("matchDetails").style.display="block";
 }
 
 function goHome(){
-  document.getElementById("walletPage").style.display = "none";
-  document.getElementById("matchDetails").style.display = "none";
-  document.getElementById("home").style.display = "block";
+  document.getElementById("home").style.display="block";
+  document.getElementById("matchDetails").style.display="none";
+  document.getElementById("walletPage").style.display="none";
 }
 
 function openWallet(){
-  document.getElementById("home").style.display = "none";
-  document.getElementById("walletPage").style.display = "block";
+  document.getElementById("home").style.display="none";
+  document.getElementById("walletPage").style.display="block";
 }
 
-/* 🔥 NEW FLOW */
-function openDeposit(){
-  document.getElementById("depositBox").style.display = "block";
-}
+function joinMatch(){
+  let time=10;
+  let timer=document.getElementById("timer");
 
-document.addEventListener("input", function(e){
-  if(e.target && e.target.id === "amount"){
-    let amt = e.target.value;
-    document.getElementById("qrBox").style.display = amt > 0 ? "block" : "none";
-  }
-});
-
-function sendDeposit(){
-  let amt = document.getElementById("amount").value;
-
-  if(amt == "" || amt <= 0){
-    alert("Enter valid amount");
-    return;
-  }
-
-  let requests = JSON.parse(localStorage.getItem("deposit_requests")) || [];
-
-  requests.push({
-    amount: amt,
-    status: "pending",
-    time: new Date().toLocaleString()
-  });
-
-  localStorage.setItem("deposit_requests", JSON.stringify(requests));
-
-  alert("Deposit request sent to admin ✅");
-}
-
-function joinMatch(i){
-  let time = 10;
-  let timerDiv = document.getElementById("timer"+i);
-
-  let interval = setInterval(()=>{
-    timerDiv.innerText = "Match starts in: " + time + "s";
+  let interval=setInterval(()=>{
+    timer.innerText="Match starts in: "+time+"s";
     time--;
-
-    if(time < 0){
+    if(time<0){
       clearInterval(interval);
-      timerDiv.innerText = "Match Started!";
+      timer.innerText="Match Started!";
     }
   },1000);
 }
 
-function showDetails(i){
-  let box = document.getElementById("details"+i);
-  box.style.display = box.style.display === "block" ? "none" : "block";
+function toggleDetails(){
+  let box=document.getElementById("details");
+  box.style.display=box.style.display==="block"?"none":"block";
+}
+
+/* DEPOSIT SYSTEM */
+function toggleDeposit(){
+  let box=document.getElementById("depositBox");
+  box.style.display=box.style.display==="block"?"none":"block";
+}
+
+document.getElementById("amount").addEventListener("input", function(){
+  let amt=this.value;
+  document.getElementById("qrBox").style.display = amt>0 ? "block" : "none";
+});
+
+function sendDeposit(){
+  let amt=document.getElementById("amount").value;
+
+  if(amt=="" || amt<=0){
+    alert("Enter valid amount");
+    return;
+  }
+
+  let data=JSON.parse(localStorage.getItem("deposit_requests")) || [];
+
+  data.push({amount:amt,status:"pending"});
+
+  localStorage.setItem("deposit_requests",JSON.stringify(data));
+
+  alert("Request sent to admin ✅");
 }
 
 </script>
