@@ -13,7 +13,6 @@ body {
   color: white;
 }
 
-/* HEADER */
 .header {
   display: flex;
   justify-content: space-between;
@@ -26,19 +25,16 @@ body {
   padding: 5px 12px;
 }
 
-/* BANNER */
 .banner img {
   width: 100%;
   border-radius: 15px;
 }
 
-/* TITLE */
 .sectionTitle {
   text-align: center;
   margin: 20px 0;
 }
 
-/* GRID */
 .matchGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -63,7 +59,6 @@ body {
   padding: 10px;
 }
 
-/* NAVBAR */
 .navbar {
   position: fixed;
   bottom: 0;
@@ -78,7 +73,6 @@ body {
   cursor: pointer;
 }
 
-/* MATCH BOX */
 .matchBox {
   background: #3a3d6b;
   border-radius: 20px;
@@ -118,8 +112,8 @@ body {
   color: cyan;
 }
 </style>
-
 </head>
+
 <body>
 
 <!-- HEADER -->
@@ -138,7 +132,6 @@ body {
   <h2 class="sectionTitle">Select Match Type</h2>
 
   <div class="matchGrid">
-
     <div class="matchCard" onclick="openMatch('lonewolf')">
       <img src="https://wallpapercave.com/wp/wp7419926.jpg">
       <p>Lone wolf (1v1)</p>
@@ -158,7 +151,6 @@ body {
       <img src="https://wallpapercave.com/wp/wp7419926.jpg">
       <p>Full map 2.0</p>
     </div>
-
   </div>
 
 </div>
@@ -170,7 +162,7 @@ body {
   <div id="matchList"></div>
 </div>
 
-<!-- WALLET PAGE -->
+<!-- WALLET -->
 <div id="walletPage" style="display:none; padding:15px;">
   <div onclick="goHome()">← Back</div>
   <h2 style="text-align:center;">Wallet</h2>
@@ -180,6 +172,51 @@ body {
     <button class="joinBtn" onclick="deposit()">Deposit</button>
     <button class="joinBtn" onclick="withdraw()">Withdraw</button>
   </div>
+</div>
+
+<!-- SETTINGS -->
+<div id="settingsPage" style="display:none; padding:15px;">
+
+  <div onclick="goHome()">← Back</div>
+
+  <h2 style="text-align:center;">Settings</h2>
+
+  <div class="matchBox">
+    <h3>👤 Profile</h3>
+    <div class="row">
+      <span>Name</span>
+      <span id="userName">Player123</span>
+    </div>
+    <button class="joinBtn" onclick="changeName()">Change Name</button>
+  </div>
+
+  <div class="matchBox">
+    <h3>🔐 Account</h3>
+    <button class="joinBtn" onclick="logout()">Logout</button>
+  </div>
+
+  <div class="matchBox">
+    <h3>🎮 Game Settings</h3>
+    <div class="row">
+      <span>Sound</span>
+      <input type="checkbox" checked>
+    </div>
+    <div class="row">
+      <span>Notifications</span>
+      <input type="checkbox" checked>
+    </div>
+  </div>
+
+  <div class="matchBox">
+    <h3>📞 Support</h3>
+    <button class="joinBtn" onclick="contactSupport()">Contact Support</button>
+  </div>
+
+  <div class="matchBox">
+    <h3>ℹ️ About</h3>
+    <p>Agent X eSports v1.0</p>
+  </div>
+
 </div>
 
 <!-- NAVBAR -->
@@ -192,45 +229,39 @@ body {
 
 <script>
 
-/* HOME */
+/* NAVIGATION */
 function goHome(){
   document.getElementById("home").style.display="block";
   document.getElementById("matchDetails").style.display="none";
   document.getElementById("walletPage").style.display="none";
+  document.getElementById("settingsPage").style.display="none";
 }
 
-/* WALLET */
 function openWallet(){
   document.getElementById("home").style.display="none";
   document.getElementById("matchDetails").style.display="none";
+  document.getElementById("settingsPage").style.display="none";
   document.getElementById("walletPage").style.display="block";
 }
 
-/* SETTINGS */
 function openSettings(){
-  alert("Settings coming soon");
+  document.getElementById("home").style.display="none";
+  document.getElementById("matchDetails").style.display="none";
+  document.getElementById("walletPage").style.display="none";
+  document.getElementById("settingsPage").style.display="block";
 }
 
 /* MATCH */
 function openMatch(type){
   document.getElementById("home").style.display="none";
   document.getElementById("walletPage").style.display="none";
+  document.getElementById("settingsPage").style.display="none";
   document.getElementById("matchDetails").style.display="block";
 
-  let matches = [];
-
-  if(type==="lonewolf"){
-    document.getElementById("matchTitle").innerText="Lone Wolf 1v1";
-    matches = [
-      {name:"Match 1", prize:55, kill:0, entry:10},
-      {name:"Match 2", prize:100, kill:10, entry:20}
-    ];
-  } else {
-    document.getElementById("matchTitle").innerText="Full Map";
-    matches = [
-      {name:"Match 1", prize:200, kill:20, entry:50}
-    ];
-  }
+  let matches = [
+    {name:"Match 1", prize:55, kill:0, entry:10},
+    {name:"Match 2", prize:100, kill:10, entry:20}
+  ];
 
   let html="";
 
@@ -238,23 +269,17 @@ function openMatch(type){
     html+=`
     <div class="matchBox">
       <h3>${m.name}</h3>
-
-      <div class="row"><span>Prize Pool</span><span>₹ ${m.prize}</span></div>
-      <div class="row"><span>Per Kill</span><span>₹ ${m.kill}</span></div>
-      <div class="row"><span>Entry Fee</span><span>₹ ${m.entry}</span></div>
+      <div class="row"><span>Prize</span><span>₹ ${m.prize}</span></div>
+      <div class="row"><span>Entry</span><span>₹ ${m.entry}</span></div>
 
       <button class="joinBtn" onclick="joinMatch(${i})">Join Match</button>
-
       <div id="timer${i}" class="timer"></div>
 
       <button class="joinBtn" onclick="showDetails(${i})">Details</button>
-
       <div id="details${i}" class="detailsBox">
-        Room ID: 123456 <br>
-        Password: 9999
+        Room ID: 123456 <br>Password: 9999
       </div>
-    </div>
-    `;
+    </div>`;
   });
 
   document.getElementById("matchList").innerHTML=html;
@@ -282,19 +307,31 @@ function showDetails(i){
   box.style.display = box.style.display==="block"?"none":"block";
 }
 
-/* WALLET ACTION */
+/* WALLET */
 function deposit(){
-  let amount = prompt("Enter deposit amount:");
-  if(amount){
-    alert("Deposit request: ₹"+amount);
-  }
+  let amount=prompt("Enter amount:");
+  if(amount) alert("Deposited ₹"+amount);
 }
 
 function withdraw(){
-  let amount = prompt("Enter withdraw amount:");
-  if(amount){
-    alert("Withdraw request: ₹"+amount);
+  let amount=prompt("Enter amount:");
+  if(amount) alert("Withdraw ₹"+amount);
+}
+
+/* SETTINGS */
+function changeName(){
+  let name=prompt("Enter name:");
+  if(name){
+    document.getElementById("userName").innerText=name;
   }
+}
+
+function logout(){
+  alert("Logged out");
+}
+
+function contactSupport(){
+  alert("support@agentx.com");
 }
 
 </script>
