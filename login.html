@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login - Agent X</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+  background: linear-gradient(#1d1f3a,#2b2e5a);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  color: white;
+}
+
+.box {
+  background: #2b2e5a;
+  padding: 25px;
+  border-radius: 20px;
+  width: 85%;
+  max-width: 350px;
+  text-align: center;
+  box-shadow: 0 0 20px cyan;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 10px;
+  border: none;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  background: cyan;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+  <h2>🔥 Agent X Login</h2>
+
+  <input type="text" id="username" placeholder="Enter Username">
+  <input type="password" id="password" placeholder="Enter Password">
+
+  <button onclick="login()">Login</button>
+</div>
+
+<script>
+
+function login(){
+  let user = document.getElementById("username").value;
+  let pass = document.getElementById("password").value;
+
+  if(user === "" || pass === ""){
+    alert("Fill all fields ❌");
+    return;
+  }
+
+  // demo login
+  localStorage.setItem("login","true");
+  localStorage.setItem("user",user);
+
+  alert("Login Successful ✅");
+
+  window.location.href = "index.html";
+}
+
+</script>
+
+</body>
+</html>
