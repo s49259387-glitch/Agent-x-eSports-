@@ -53,14 +53,14 @@ body {
   overflow: hidden;
 }
 
-/* 🔥 FIX IMAGE PROBLEM */
+/* ✅ IMAGE FIX */
 .matchCard img {
   width: 100%;
-  height: 120px;
+  height: 130px;
   object-fit: cover;
+  display: block;
 }
 
-/* TEXT */
 .matchCard p {
   text-align: center;
   padding: 10px;
@@ -104,7 +104,12 @@ body {
   cursor: pointer;
 }
 
-/* DETAILS BOX */
+/* DISABLED */
+.joinBtn:disabled {
+  background: gray;
+}
+
+/* DETAILS */
 .detailsBox {
   background: #222;
   padding: 10px;
@@ -141,23 +146,24 @@ body {
 
   <div class="matchGrid">
 
+    <!-- ✅ FIXED IMAGE LINKS -->
     <div class="matchCard" onclick="openMatch('lonewolf')">
-      <img src="https://i.ibb.co/sdYpQbFt/Screenshot-20260408-232023.jpg">
+      <img src="https://i.postimg.cc/3xB6zZcV/lonewolf.jpg">
       <p>Lone wolf (1v1)</p>
     </div>
 
     <div class="matchCard" onclick="openMatch('fullmap')">
-      <img src="https://i.ibb.co/sdYpQbFt/Screenshot-20260408-232023.jpg">
+      <img src="https://i.postimg.cc/3xB6zZcV/lonewolf.jpg">
       <p>Full map 2.0</p>
     </div>
 
     <div class="matchCard" onclick="openMatch('lonewolf')">
-      <img src="https://i.ibb.co/sdYpQbFt/Screenshot-20260408-232023.jpg">
+      <img src="https://i.postimg.cc/3xB6zZcV/lonewolf.jpg">
       <p>Lone wolf (1v1)</p>
     </div>
 
     <div class="matchCard" onclick="openMatch('fullmap')">
-      <img src="https://i.ibb.co/sdYpQbFt/Screenshot-20260408-232023.jpg">
+      <img src="https://i.postimg.cc/3xB6zZcV/lonewolf.jpg">
       <p>Full map 2.0</p>
     </div>
 
@@ -184,7 +190,6 @@ body {
   <div>⚙️ Settings</div>
 </div>
 
-<!-- SCRIPT -->
 <script>
 
 function openMatch(type) {
@@ -223,17 +228,14 @@ function openMatch(type) {
       <div class="row"><span>Version</span><span>${m.version}</span></div>
       <div class="row"><span>Map</span><span>${m.map}</span></div>
 
-      <button class="joinBtn" onclick="joinMatch(${i})">Join Match</button>
+      <button id="join${i}" class="joinBtn" onclick="joinMatch(${i})">Join Match</button>
 
       <div id="timer${i}" class="timer"></div>
-
-      <button class="joinBtn" onclick="showDetails(${i})">Details</button>
 
       <div id="details${i}" class="detailsBox">
         Room ID: 123456<br>
         Password: 9999
       </div>
-
     </div>
     `;
   });
@@ -246,11 +248,18 @@ function goBack(){
   document.getElementById("matchDetails").style.display = "none";
 }
 
-/* 🔥 JOIN BUTTON FIX */
+/* ✅ FIXED JOIN BUTTON */
 function joinMatch(i){
-  let time = 10;
-
+  let btn = document.getElementById("join"+i);
   let timerDiv = document.getElementById("timer"+i);
+  let details = document.getElementById("details"+i);
+
+  btn.disabled = true;
+  btn.innerText = "Joined";
+
+  details.style.display = "block";
+
+  let time = 10;
 
   let interval = setInterval(()=>{
     timerDiv.innerText = "Match starts in: " + time + "s";
@@ -261,12 +270,6 @@ function joinMatch(i){
       timerDiv.innerText = "Match Started!";
     }
   },1000);
-}
-
-/* DETAILS BUTTON */
-function showDetails(i){
-  let box = document.getElementById("details"+i);
-  box.style.display = box.style.display === "block" ? "none" : "block";
 }
 
 </script>
