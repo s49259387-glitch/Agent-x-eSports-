@@ -53,6 +53,7 @@ body {
   overflow: hidden;
 }
 
+/* FIX IMAGE */
 .matchCard img {
   width: 100%;
   height: 120px;
@@ -90,7 +91,6 @@ body {
   margin: 6px 0;
 }
 
-/* BUTTON */
 .joinBtn {
   width: 100%;
   padding: 12px;
@@ -102,7 +102,6 @@ body {
   cursor: pointer;
 }
 
-/* DETAILS BOX */
 .detailsBox {
   background: #222;
   padding: 10px;
@@ -111,7 +110,6 @@ body {
   display: none;
 }
 
-/* TIMER */
 .timer {
   text-align: center;
   margin-top: 10px;
@@ -184,11 +182,12 @@ body {
 
 <script>
 
-/* 🔐 LOGIN CHECK ADD */
+/* 🔐 LOGIN CHECK (ADDED) */
 if(!localStorage.getItem("user")){
   window.location.href = "login.html";
 }
 
+/* MATCH SYSTEM */
 function openMatch(type) {
   document.getElementById("home").style.display = "none";
   document.getElementById("matchDetails").style.display = "block";
@@ -267,7 +266,7 @@ function showDetails(i){
   box.style.display = box.style.display === "block" ? "none" : "block";
 }
 
-/* 🔓 LOGOUT FUNCTION ADD */
+/* 🔓 LOGOUT (ADDED) */
 function logout(){
   localStorage.removeItem("user");
   window.location.href = "login.html";
