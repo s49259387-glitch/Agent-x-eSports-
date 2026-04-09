@@ -13,10 +13,12 @@ body {
   color: white;
 }
 
+/* HEADER */
 .header {
   display: flex;
   justify-content: space-between;
   padding: 15px;
+  font-size: 18px;
 }
 
 .walletBox {
@@ -25,16 +27,19 @@ body {
   padding: 5px 12px;
 }
 
+/* BANNER */
 .banner img {
   width: 100%;
   border-radius: 15px;
 }
 
+/* TITLE */
 .sectionTitle {
   text-align: center;
   margin: 20px 0;
 }
 
+/* MATCH GRID */
 .matchGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -59,6 +64,7 @@ body {
   padding: 10px;
 }
 
+/* NAVBAR */
 .navbar {
   position: fixed;
   bottom: 0;
@@ -69,10 +75,7 @@ body {
   padding: 10px 0;
 }
 
-.navbar div {
-  cursor: pointer;
-}
-
+/* MATCH DETAILS */
 .matchBox {
   background: #3a3d6b;
   border-radius: 20px;
@@ -87,6 +90,7 @@ body {
   margin: 6px 0;
 }
 
+/* BUTTON */
 .joinBtn {
   width: 100%;
   padding: 12px;
@@ -98,6 +102,7 @@ body {
   cursor: pointer;
 }
 
+/* DETAILS BOX */
 .detailsBox {
   background: #222;
   padding: 10px;
@@ -106,14 +111,21 @@ body {
   display: none;
 }
 
+/* TIMER */
 .timer {
   text-align: center;
   margin-top: 10px;
   color: cyan;
 }
-</style>
-</head>
 
+/* SETTINGS PAGE */
+.settingsPage {
+  display: none;
+  padding: 15px;
+}
+</style>
+
+</head>
 <body>
 
 <!-- HEADER -->
@@ -125,135 +137,143 @@ body {
 <!-- HOME -->
 <div id="home">
   <div class="banner">
-    <img src="https://wallpapercave.com/wp/wp5128415.jpg">
+    <img src="https://i.postimg.cc/htcg0Zd2/file-000000009a8c7208a5891d21e8cc7c9c.png">
   </div>
 
   <h2 class="sectionTitle">Select Match Type</h2>
 
   <div class="matchGrid">
-    <div class="matchCard" onclick="openMatch()">
-      <img src="https://wallpapercave.com/wp/wp7419926.jpg">
+    <div class="matchCard" onclick="openMatch('lonewolf')">
+      <img src="https://i.ibb.co/3m7R8hZ/lonewolf.jpg">
       <p>Lone wolf (1v1)</p>
     </div>
 
-    <div class="matchCard" onclick="openMatch()">
-      <img src="https://wallpapercave.com/wp/wp7419926.jpg">
+    <div class="matchCard" onclick="openMatch('fullmap')">
+      <img src="https://i.ibb.co/3m7R8hZ/lonewolf.jpg">
       <p>Full map 2.0</p>
     </div>
   </div>
 </div>
 
-<!-- MATCH PAGE -->
+<!-- MATCH DETAILS -->
 <div id="matchDetails" style="display:none; padding:15px;">
-  <div onclick="goHome()">← Back</div>
-  <h2>Lone Wolf Matches</h2>
-
-  <div class="matchBox">
-    <h3>Match 1</h3>
-    <div class="row"><span>Prize</span><span>₹55</span></div>
-    <div class="row"><span>Entry</span><span>₹10</span></div>
-
-    <button class="joinBtn" onclick="joinMatch()">Join Match</button>
-    <div id="timer" class="timer"></div>
-
-    <button class="joinBtn" onclick="toggleDetails()">Details</button>
-    <div id="details" class="detailsBox">
-      Room ID: 123456 <br>Password: 9999
-    </div>
-  </div>
+  <div onclick="goBack()">← Back</div>
+  <h2 id="matchTitle"></h2>
+  <div id="matchList"></div>
 </div>
 
-<!-- WALLET PAGE -->
-<div id="walletPage" style="display:none; padding:15px;">
-  <div onclick="goHome()">← Back</div>
-  <h2>Wallet</h2>
-
-  <div class="matchBox">
-    <h3>Balance: ₹ 0</h3>
-    <button class="joinBtn" onclick="deposit()">Deposit</button>
-    <button class="joinBtn" onclick="withdraw()">Withdraw</button>
-  </div>
-</div>
-
-<!-- SETTINGS PAGE -->
-<div id="settingsPage" style="display:none; padding:15px;">
+<!-- SETTINGS -->
+<div id="settings" class="settingsPage">
   <div onclick="goHome()">← Back</div>
   <h2>Settings</h2>
 
-  <div class="matchBox">
-    <p>👤 Username: Player123</p>
-    <p>📱 Version: 1.0</p>
-    <p>📞 Support: support@agentx.com</p>
-  </div>
+  <button class="joinBtn" onclick="logout()">Logout</button>
 </div>
 
 <!-- NAVBAR -->
 <div class="navbar">
   <div onclick="goHome()">🏠 Home</div>
-  <div onclick="openMatch()">🎮 Matches</div>
-  <div onclick="openWallet()">💰 Wallet</div>
+  <div onclick="goMatches()">🎮 Matches</div>
+  <div onclick="goWallet()">💰 Wallet</div>
   <div onclick="openSettings()">⚙️ Settings</div>
 </div>
 
 <script>
 
+/* 🔐 LOGIN CHECK */
+if(!localStorage.getItem("user")){
+  window.location.href = "login.html";
+}
+
 /* NAVIGATION */
 function goHome(){
-  hideAll();
-  document.getElementById("home").style.display="block";
+  document.getElementById("home").style.display = "block";
+  document.getElementById("matchDetails").style.display = "none";
+  document.getElementById("settings").style.display = "none";
 }
 
-function openMatch(){
-  hideAll();
-  document.getElementById("matchDetails").style.display="block";
+function goMatches(){
+  alert("Select any match from home");
 }
 
-function openWallet(){
-  hideAll();
-  document.getElementById("walletPage").style.display="block";
+function goWallet(){
+  alert("Wallet coming soon");
 }
 
 function openSettings(){
-  hideAll();
-  document.getElementById("settingsPage").style.display="block";
+  document.getElementById("home").style.display = "none";
+  document.getElementById("matchDetails").style.display = "none";
+  document.getElementById("settings").style.display = "block";
 }
 
-function hideAll(){
-  document.getElementById("home").style.display="none";
-  document.getElementById("matchDetails").style.display="none";
-  document.getElementById("walletPage").style.display="none";
-  document.getElementById("settingsPage").style.display="none";
+/* LOGOUT */
+function logout(){
+  localStorage.removeItem("user");
+  window.location.href = "login.html";
 }
 
-/* MATCH */
-function joinMatch(){
-  let time=10;
-  let t=document.getElementById("timer");
+/* MATCH SYSTEM */
+function openMatch(type){
+  document.getElementById("home").style.display = "none";
+  document.getElementById("matchDetails").style.display = "block";
 
-  let i=setInterval(()=>{
-    t.innerText="Match starts in: "+time+"s";
+  let matches = [
+    {name:"Match 1", prize:55, kill:0, entry:10},
+    {name:"Match 2", prize:100, kill:10, entry:20}
+  ];
+
+  let html = "";
+
+  matches.forEach((m,i)=>{
+    html += `
+    <div class="matchBox">
+      <h3>${m.name}</h3>
+
+      <div class="row"><span>Prize Pool</span><span>₹ ${m.prize}</span></div>
+      <div class="row"><span>Per Kill</span><span>₹ ${m.kill}</span></div>
+      <div class="row"><span>Entry Fee</span><span>₹ ${m.entry}</span></div>
+
+      <button class="joinBtn" onclick="joinMatch(${i})">Join Match</button>
+
+      <div id="timer${i}" class="timer"></div>
+
+      <button class="joinBtn" onclick="showDetails(${i})">Details</button>
+
+      <div id="details${i}" class="detailsBox">
+        Room ID: 123456<br>
+        Password: 9999
+      </div>
+    </div>
+    `;
+  });
+
+  document.getElementById("matchList").innerHTML = html;
+}
+
+function goBack(){
+  goHome();
+}
+
+/* JOIN */
+function joinMatch(i){
+  let time = 10;
+  let timer = document.getElementById("timer"+i);
+
+  let x = setInterval(()=>{
+    timer.innerText = "Match starts in: "+time+"s";
     time--;
-    if(time<0){
-      clearInterval(i);
-      t.innerText="Match Started!";
+
+    if(time < 0){
+      clearInterval(x);
+      timer.innerText = "Match Started!";
     }
   },1000);
 }
 
-function toggleDetails(){
-  let d=document.getElementById("details");
-  d.style.display = d.style.display==="block"?"none":"block";
-}
-
-/* WALLET */
-function deposit(){
-  let a=prompt("Enter amount");
-  if(a) alert("Deposited ₹"+a);
-}
-
-function withdraw(){
-  let a=prompt("Enter amount");
-  if(a) alert("Withdraw ₹"+a);
+/* DETAILS */
+function showDetails(i){
+  let box = document.getElementById("details"+i);
+  box.style.display = box.style.display === "block" ? "none" : "block";
 }
 
 </script>
