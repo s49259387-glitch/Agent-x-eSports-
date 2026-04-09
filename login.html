@@ -55,20 +55,28 @@ button{
 
   <button onclick="login()">Login</button>
 </div>
-
 <script>
 function login(){
-  let u=document.getElementById("user").value;
-  let p=document.getElementById("pass").value;
+  let u = document.getElementById("username").value;
+  let p = document.getElementById("password").value;
 
   if(u=="" || p==""){
     alert("Fill all fields");
     return;
   }
 
-  localStorage.setItem("login","yes");
-
-  window.location.href="index.html";
+  // 👇 ADMIN LOGIN (change kar sakte ho)
+  if(u === "admin@gmail.com" && p === "admin123"){
+    localStorage.setItem("login", "yes");
+    localStorage.setItem("role", "admin");
+    window.location.href = "index.html";
+  } 
+  // 👇 USER LOGIN
+  else{
+    localStorage.setItem("login", "yes");
+    localStorage.setItem("role", "user");
+    window.location.href = "index.html";
+  }
 }
 </script>
 
