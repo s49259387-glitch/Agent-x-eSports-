@@ -113,7 +113,6 @@ body {
 
 <body>
 
-<!-- LOGIN CHECK -->
 <script>
 if(localStorage.getItem("login") !== "yes"){
   window.location.href = "login.html";
@@ -124,7 +123,7 @@ if(localStorage.getItem("login") !== "yes"){
 <div class="header">
   <div>🔥 Agent X eSports</div>
   <div>
-    <span class="walletBox">₹ 0</span>
+    <span class="walletBox" id="walletBalance">₹ 0</span>
     <span onclick="logout()" style="margin-left:10px;cursor:pointer;">🚪</span>
   </div>
 </div>
@@ -216,9 +215,7 @@ if(localStorage.getItem("login") !== "yes"){
   <div onclick="goHome()">🏠 Home</div>
   <div onclick="openMatch()">🎮 Matches</div>
   <div onclick="openWallet()">💰 Wallet</div>
-
   <div id="adminPanelBtn" onclick="openAdmin()" style="display:none;">👑 Admin</div>
-
   <div onclick="alert('Settings coming soon')">⚙️ Settings</div>
 </div>
 
@@ -230,12 +227,24 @@ function logout(){
   window.location.href = "login.html";
 }
 
+// ✅ WALLET INIT
+if(!localStorage.getItem("wallet")){
+  localStorage.setItem("wallet","0");
+}
+
 let role = localStorage.getItem("role");
+
+// ✅ UPDATE WALLET UI
+function updateWalletUI(){
+  let bal = localStorage.getItem("wallet") || 0;
+  document.getElementById("walletBalance").innerText = "₹ " + bal;
+}
 
 window.onload = function(){
   if(role === "admin"){
     document.getElementById("adminPanelBtn").style.display = "block";
   }
+  updateWalletUI();
 };
 
 function openAdmin(){
@@ -271,11 +280,23 @@ function loadRequests(){
   });
 }
 
+// ✅ APPROVE = MONEY ADD
 function approve(index){
   let data = JSON.parse(localStorage.getItem("deposit_requests"));
+
+  let amount = Number(data[index].amount);
   data[index].status = "approved";
+
+  let currentBalance = Number(localStorage.getItem("wallet") || 0);
+  currentBalance += amount;
+
+  localStorage.setItem("wallet", currentBalance);
   localStorage.setItem("deposit_requests", JSON.stringify(data));
+
+  alert("Approved + Wallet Updated ✅");
+
   loadRequests();
+  updateWalletUI();
 }
 
 function reject(index){
