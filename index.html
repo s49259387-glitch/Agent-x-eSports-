@@ -113,9 +113,9 @@ body {
 
 <body>
 
-<!-- 🔐 LOGIN CHECK -->
+<!-- 🔐 LOGIN CHECK (FIXED) -->
 <script>
-if(!localStorage.getItem("login")){
+if(localStorage.getItem("login") !== "yes"){
   window.location.href = "login.html";
 }
 </script>
