@@ -182,7 +182,6 @@ if(localStorage.getItem("login") !== "yes"){
   <button class="joinBtn" onclick="toggleDeposit()">Deposit</button>
   <button class="joinBtn" onclick="toggleWithdraw()">Withdraw</button>
 
-  <!-- Deposit -->
   <div id="depositBox" style="display:none; text-align:center; margin-top:15px;">
     <input type="number" id="amount" placeholder="Enter Amount"
     style="width:80%; padding:10px; border-radius:8px; border:none;">
@@ -198,7 +197,6 @@ if(localStorage.getItem("login") !== "yes"){
     </div>
   </div>
 
-  <!-- Withdraw -->
   <div id="withdrawBox" style="display:none; text-align:center; margin-top:15px;">
     <input type="number" id="withdrawAmount" placeholder="Enter Withdraw Amount"
     style="width:80%; padding:10px; border-radius:8px; border:none;">
@@ -211,6 +209,17 @@ if(localStorage.getItem("login") !== "yes"){
   <div onclick="goHome()">← Back</div>
   <h2>Admin Panel</h2>
   <div id="requestList"></div>
+</div>
+
+<!-- 🔥 JOIN POPUP -->
+<div id="joinPopup" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);justify-content:center;align-items:center;z-index:999;">
+  <div style="background:#2b2e5a;padding:20px;border-radius:15px;width:85%;max-width:300px;text-align:center;">
+    <h3>Join Match</h3>
+    <input type="text" id="gameUID" placeholder="Enter Gaming UID" style="width:100%;padding:10px;margin:8px 0;border-radius:8px;border:none;">
+    <input type="text" id="gameName" placeholder="Enter Game Name" style="width:100%;padding:10px;margin:8px 0;border-radius:8px;border:none;">
+    <button class="joinBtn" onclick="submitJoin()">Submit</button>
+    <button class="joinBtn" onclick="closePopup()" style="background:red;">Cancel</button>
+  </div>
 </div>
 
 <!-- NAVBAR -->
@@ -229,7 +238,6 @@ function logout(){
   window.location.href = "login.html";
 }
 
-// Wallet init
 if(!localStorage.getItem("wallet")){
   localStorage.setItem("wallet","0");
 }
@@ -246,7 +254,6 @@ window.onload = function(){
   updateWalletUI();
 };
 
-// NAVIGATION
 function openMatch(){hideAll(); document.getElementById("matchDetails").style.display="block";}
 function goHome(){hideAll(); document.getElementById("home").style.display="block";}
 function openWallet(){hideAll(); document.getElementById("walletPage").style.display="block";}
@@ -259,8 +266,32 @@ function hideAll(){
   document.getElementById("adminPanel").style.display="none";
 }
 
-// MATCH
+/* 🔥 UPDATED JOIN */
 function joinMatch(){
+  document.getElementById("joinPopup").style.display="flex";
+}
+
+function closePopup(){
+  document.getElementById("joinPopup").style.display="none";
+}
+
+function submitJoin(){
+  let uid=document.getElementById("gameUID").value;
+  let name=document.getElementById("gameName").value;
+
+  if(uid==""||name==""){alert("Fill all details ❌");return;}
+
+  let players=JSON.parse(localStorage.getItem("joined_players"))||[];
+  players.push({uid,name});
+  localStorage.setItem("joined_players",JSON.stringify(players));
+
+  alert("Joined Successfully ✅");
+  closePopup();
+
+  startTimer();
+}
+
+function startTimer(){
   let t=10;
   let timer=document.getElementById("timer");
   let i=setInterval(()=>{
@@ -275,7 +306,6 @@ function toggleDetails(){
   b.style.display=b.style.display==="block"?"none":"block";
 }
 
-// DEPOSIT
 function toggleDeposit(){
   let b=document.getElementById("depositBox");
   b.style.display=b.style.display==="block"?"none":"block";
@@ -299,7 +329,6 @@ function sendDeposit(){
   alert("Deposit Request Sent ✅");
 }
 
-// WITHDRAW
 function toggleWithdraw(){
   let b=document.getElementById("withdrawBox");
   b.style.display=b.style.display==="block"?"none":"block";
@@ -319,7 +348,6 @@ function sendWithdraw(){
   alert("Withdraw Request Sent ✅");
 }
 
-// ADMIN
 function loadRequests(){
   let box=document.getElementById("requestList");
   box.innerHTML="";
@@ -328,19 +356,11 @@ function loadRequests(){
   let wit=JSON.parse(localStorage.getItem("withdraw_requests"))||[];
 
   dep.forEach((i,x)=>{
-    box.innerHTML+=`
-    <div style="background:#3a3d6b;padding:10px;margin:10px;border-radius:10px;">
-    ₹${i.amount} (Deposit - ${i.status})
-    <button onclick="approve(${x})">✅</button>
-    </div>`;
+    box.innerHTML+=`<div style="background:#3a3d6b;padding:10px;margin:10px;border-radius:10px;">₹${i.amount} (Deposit - ${i.status})<button onclick="approve(${x})">✅</button></div>`;
   });
 
   wit.forEach((i,x)=>{
-    box.innerHTML+=`
-    <div style="background:#5a3d3d;padding:10px;margin:10px;border-radius:10px;">
-    ₹${i.amount} (Withdraw - ${i.status})
-    <button onclick="approveWithdraw(${x})">✅</button>
-    </div>`;
+    box.innerHTML+=`<div style="background:#5a3d3d;padding:10px;margin:10px;border-radius:10px;">₹${i.amount} (Withdraw - ${i.status})<button onclick="approveWithdraw(${x})">✅</button></div>`;
   });
 }
 
