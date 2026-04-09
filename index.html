@@ -51,14 +51,13 @@ body {
   background: #3a3d6b;
   border-radius: 15px;
   overflow: hidden;
+  cursor: pointer;
 }
 
-/* ✅ IMAGE FIX */
 .matchCard img {
   width: 100%;
   height: 130px;
   object-fit: cover;
-  display: block;
 }
 
 .matchCard p {
@@ -92,7 +91,6 @@ body {
   margin: 6px 0;
 }
 
-/* BUTTON */
 .joinBtn {
   width: 100%;
   padding: 12px;
@@ -104,12 +102,6 @@ body {
   cursor: pointer;
 }
 
-/* DISABLED */
-.joinBtn:disabled {
-  background: gray;
-}
-
-/* DETAILS */
 .detailsBox {
   background: #222;
   padding: 10px;
@@ -118,7 +110,6 @@ body {
   display: none;
 }
 
-/* TIMER */
 .timer {
   text-align: center;
   margin-top: 10px;
@@ -146,24 +137,23 @@ body {
 
   <div class="matchGrid">
 
-    <!-- ✅ FIXED IMAGE LINKS -->
     <div class="matchCard" onclick="openMatch('lonewolf')">
-      <img src="https://i.postimg.cc/3xB6zZcV/lonewolf.jpg">
+      <img src="https://wallpapercave.com/wp/wp5128415.jpg">
       <p>Lone wolf (1v1)</p>
     </div>
 
     <div class="matchCard" onclick="openMatch('fullmap')">
-      <img src="https://i.postimg.cc/3xB6zZcV/lonewolf.jpg">
+      <img src="https://wallpapercave.com/wp/wp7419926.jpg">
       <p>Full map 2.0</p>
     </div>
 
     <div class="matchCard" onclick="openMatch('lonewolf')">
-      <img src="https://i.postimg.cc/3xB6zZcV/lonewolf.jpg">
+      <img src="https://wallpapercave.com/wp/wp5128415.jpg">
       <p>Lone wolf (1v1)</p>
     </div>
 
     <div class="matchCard" onclick="openMatch('fullmap')">
-      <img src="https://i.postimg.cc/3xB6zZcV/lonewolf.jpg">
+      <img src="https://wallpapercave.com/wp/wp7419926.jpg">
       <p>Full map 2.0</p>
     </div>
 
@@ -174,7 +164,7 @@ body {
 <!-- MATCH DETAILS -->
 <div id="matchDetails" style="display:none; padding:15px;">
 
-  <div onclick="goBack()">← Back</div>
+  <div onclick="goHome()">← Back</div>
 
   <h2 id="matchTitle"></h2>
 
@@ -184,12 +174,13 @@ body {
 
 <!-- NAVBAR -->
 <div class="navbar">
-  <div>🏠 Home</div>
-  <div>🎮 Matches</div>
-  <div>💰 Wallet</div>
-  <div>⚙️ Settings</div>
+  <div onclick="goHome()">🏠 Home</div>
+  <div onclick="openMatches()">🎮 Matches</div>
+  <div onclick="openWallet()">💰 Wallet</div>
+  <div onclick="openSettings()">⚙️ Settings</div>
 </div>
 
+<!-- SCRIPT -->
 <script>
 
 function openMatch(type) {
@@ -228,14 +219,17 @@ function openMatch(type) {
       <div class="row"><span>Version</span><span>${m.version}</span></div>
       <div class="row"><span>Map</span><span>${m.map}</span></div>
 
-      <button id="join${i}" class="joinBtn" onclick="joinMatch(${i})">Join Match</button>
+      <button class="joinBtn" onclick="joinMatch(${i})">Join Match</button>
 
       <div id="timer${i}" class="timer"></div>
+
+      <button class="joinBtn" onclick="showDetails(${i})">Details</button>
 
       <div id="details${i}" class="detailsBox">
         Room ID: 123456<br>
         Password: 9999
       </div>
+
     </div>
     `;
   });
@@ -243,23 +237,9 @@ function openMatch(type) {
   document.getElementById("matchList").innerHTML = html;
 }
 
-function goBack(){
-  document.getElementById("home").style.display = "block";
-  document.getElementById("matchDetails").style.display = "none";
-}
-
-/* ✅ FIXED JOIN BUTTON */
 function joinMatch(i){
-  let btn = document.getElementById("join"+i);
-  let timerDiv = document.getElementById("timer"+i);
-  let details = document.getElementById("details"+i);
-
-  btn.disabled = true;
-  btn.innerText = "Joined";
-
-  details.style.display = "block";
-
   let time = 10;
+  let timerDiv = document.getElementById("timer"+i);
 
   let interval = setInterval(()=>{
     timerDiv.innerText = "Match starts in: " + time + "s";
@@ -270,6 +250,28 @@ function joinMatch(i){
       timerDiv.innerText = "Match Started!";
     }
   },1000);
+}
+
+function showDetails(i){
+  let box = document.getElementById("details"+i);
+  box.style.display = box.style.display === "block" ? "none" : "block";
+}
+
+function goHome(){
+  document.getElementById("home").style.display="block";
+  document.getElementById("matchDetails").style.display="none";
+}
+
+function openMatches(){
+  alert("Matches page coming soon");
+}
+
+function openWallet(){
+  alert("Wallet system coming soon");
+}
+
+function openSettings(){
+  alert("Settings coming soon");
 }
 
 </script>
