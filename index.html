@@ -179,8 +179,13 @@ if(localStorage.getItem("login") !== "yes"){
 
   <h2>Wallet</h2>
 
+  <!-- Deposit -->
   <button class="joinBtn" onclick="toggleDeposit()">Deposit</button>
 
+  <!-- Withdraw -->
+  <button class="joinBtn" onclick="toggleWithdraw()">Withdraw</button>
+
+  <!-- Deposit Box -->
   <div id="depositBox" style="display:none; text-align:center; margin-top:15px;">
 
     <input type="number" id="amount" placeholder="Enter Amount"
@@ -199,6 +204,17 @@ if(localStorage.getItem("login") !== "yes"){
     </div>
 
   </div>
+
+  <!-- Withdraw Box -->
+  <div id="withdrawBox" style="display:none; text-align:center; margin-top:15px;">
+
+    <input type="number" id="withdrawAmount" placeholder="Enter Withdraw Amount"
+    style="width:80%; padding:10px; border-radius:8px; border:none;">
+
+    <button class="joinBtn" onclick="sendWithdraw()">Send Withdraw Request</button>
+
+  </div>
+
 </div>
 
 <!-- ADMIN PANEL -->
@@ -227,14 +243,14 @@ function logout(){
   window.location.href = "login.html";
 }
 
-// ✅ WALLET INIT
+// WALLET INIT
 if(!localStorage.getItem("wallet")){
   localStorage.setItem("wallet","0");
 }
 
 let role = localStorage.getItem("role");
 
-// ✅ UPDATE WALLET UI
+// UPDATE WALLET UI
 function updateWalletUI(){
   let bal = localStorage.getItem("wallet") || 0;
   document.getElementById("walletBalance").innerText = "₹ " + bal;
@@ -280,7 +296,7 @@ function loadRequests(){
   });
 }
 
-// ✅ APPROVE = MONEY ADD
+// APPROVE = ADD MONEY
 function approve(index){
   let data = JSON.parse(localStorage.getItem("deposit_requests"));
 
@@ -327,27 +343,13 @@ function openWallet(){
   document.getElementById("adminPanel").style.display="none";
 }
 
-function joinMatch(){
-  let time=10;
-  let timer=document.getElementById("timer");
-
-  let interval=setInterval(()=>{
-    timer.innerText="Match starts in: "+time+"s";
-    time--;
-    if(time<0){
-      clearInterval(interval);
-      timer.innerText="Match Started!";
-    }
-  },1000);
-}
-
-function toggleDetails(){
-  let box=document.getElementById("details");
+function toggleDeposit(){
+  let box=document.getElementById("depositBox");
   box.style.display=box.style.display==="block"?"none":"block";
 }
 
-function toggleDeposit(){
-  let box=document.getElementById("depositBox");
+function toggleWithdraw(){
+  let box=document.getElementById("withdrawBox");
   box.style.display=box.style.display==="block"?"none":"block";
 }
 
@@ -365,12 +367,31 @@ function sendDeposit(){
   }
 
   let data=JSON.parse(localStorage.getItem("deposit_requests")) || [];
-
   data.push({amount:amt,status:"pending"});
-
   localStorage.setItem("deposit_requests",JSON.stringify(data));
 
   alert("Request sent to admin ✅");
+}
+
+function sendWithdraw(){
+  let amt = Number(document.getElementById("withdrawAmount").value);
+  let balance = Number(localStorage.getItem("wallet") || 0);
+
+  if(amt<=0){
+    alert("Enter valid amount");
+    return;
+  }
+
+  if(amt > balance){
+    alert("Insufficient balance ❌");
+    return;
+  }
+
+  let data = JSON.parse(localStorage.getItem("withdraw_requests")) || [];
+  data.push({amount:amt,status:"pending"});
+  localStorage.setItem("withdraw_requests", JSON.stringify(data));
+
+  alert("Withdraw request sent ✅");
 }
 
 </script>
