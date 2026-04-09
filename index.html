@@ -166,16 +166,30 @@ body {
 
   <h2>Wallet</h2>
 
-  <button class="joinBtn" onclick="deposit()">Deposit</button>
+  <button class="joinBtn" onclick="openDeposit()">Deposit</button>
 
-  <!-- 🔥 QR ADD -->
-  <div id="qrBox" style="display:none; text-align:center; margin-top:15px;">
-    <p>Scan & Pay</p>
-    <img src="data:image/jpeg;base64,
+  <!-- 🔥 NEW DEPOSIT FLOW -->
+  <div id="depositBox" style="display:none; text-align:center; margin-top:15px;">
+
+    <input type="number" id="amount" placeholder="Enter Amount"
+    style="width:80%; padding:10px; border-radius:8px; border:none;">
+
+    <!-- QR -->
+    <div id="qrBox" style="display:none; margin-top:15px;">
+      <p>Scan & Pay</p>
+
+      <img src="data:image/jpeg;base64,
 /9j/4AAQSkZJRgABAQAAAQABAAD... (shortened)
 " style="width:200px; border-radius:10px;">
-    <p>UPI ID: 7985393071-k62e@ybl</p>
-    <p>Name: DURGESH SHARMA</p>
+
+      <p>UPI ID: 7985393071-k62e@ybl</p>
+      <p>Name: DURGESH SHARMA</p>
+
+      <button class="joinBtn" onclick="sendDeposit()" style="margin-top:10px;">
+        Send Request
+      </button>
+    </div>
+
   </div>
 
 </div>
@@ -243,10 +257,37 @@ function openWallet(){
   document.getElementById("walletPage").style.display = "block";
 }
 
-/* 🔥 QR FUNCTION ADD */
-function deposit(){
-  let box = document.getElementById("qrBox");
-  box.style.display = box.style.display === "block" ? "none" : "block";
+/* 🔥 NEW FLOW */
+function openDeposit(){
+  document.getElementById("depositBox").style.display = "block";
+}
+
+document.addEventListener("input", function(e){
+  if(e.target && e.target.id === "amount"){
+    let amt = e.target.value;
+    document.getElementById("qrBox").style.display = amt > 0 ? "block" : "none";
+  }
+});
+
+function sendDeposit(){
+  let amt = document.getElementById("amount").value;
+
+  if(amt == "" || amt <= 0){
+    alert("Enter valid amount");
+    return;
+  }
+
+  let requests = JSON.parse(localStorage.getItem("deposit_requests")) || [];
+
+  requests.push({
+    amount: amt,
+    status: "pending",
+    time: new Date().toLocaleString()
+  });
+
+  localStorage.setItem("deposit_requests", JSON.stringify(requests));
+
+  alert("Deposit request sent to admin ✅");
 }
 
 function joinMatch(i){
