@@ -2,166 +2,88 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin Panel</title>
 
 <style>
-body{
+body {
   font-family: Arial;
-  background:#1d1f3a;
-  color:white;
-  padding:20px;
-  margin:0;
+  background: #111;
+  color: white;
+  padding: 15px;
 }
 
-h2{
-  text-align:center;
+.box {
+  background: #222;
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 10px;
 }
 
-input,button{
-  width:100%;
-  padding:12px;
-  margin:6px 0;
-  border-radius:10px;
-  border:none;
-  font-size:15px;
+button {
+  padding: 8px 12px;
+  margin-top: 5px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
 }
 
-input{
-  background:#2b2e5a;
-  color:white;
-}
-
-button{
-  background:cyan;
-  font-weight:bold;
-  cursor:pointer;
-}
-
-.card{
-  background:#2b2e5a;
-  padding:10px;
-  border-radius:10px;
-  margin-top:10px;
-}
-
-.deleteBtn{
-  background:red;
-  margin-top:5px;
-}
+.approve { background: green; color: white; }
+.reject { background: red; color: white; }
 </style>
-</head>
 
+</head>
 <body>
 
-<h2>🔥 Admin Panel</h2>
+<h2>Admin Panel</h2>
 
-<!-- LOGIN -->
-<div id="loginBox">
-  <input type="email" id="email" placeholder="Email">
-  <input type="password" id="pass" placeholder="Password">
-  <button onclick="login()">Login</button>
-</div>
-
-<!-- PANEL -->
-<div id="panel" style="display:none;">
-
-  <h3>Add Match</h3>
-
-  <input id="name" placeholder="Match Name">
-  <input id="prize" placeholder="Prize Pool">
-  <input id="entry" placeholder="Entry Fee">
-  <input id="time" type="datetime-local">
-  <input id="room" placeholder="Room ID">
-  <input id="roompass" placeholder="Password">
-
-  <button onclick="addMatch()">Save Match</button>
-
-  <h3>Saved Matches</h3>
-  <div id="list"></div>
-
-</div>
+<div id="requests"></div>
 
 <script>
 
-// 🔐 LOGIN
-function login(){
-  let email = document.getElementById("email").value;
-  let pass = document.getElementById("pass").value;
-
-  if(email==="admin@gmail.com" && pass==="1234"){
-    document.getElementById("loginBox").style.display="none";
-    document.getElementById("panel").style.display="block";
-    loadMatches();
-  } else {
-    alert("Wrong Email or Password");
-  }
-}
-
-// 💾 ADD MATCH
-function addMatch(){
-  if(!name.value || !prize.value || !entry.value || !time.value){
-    alert("Fill all fields");
-    return;
-  }
-
-  let match = {
-    name: name.value,
-    prize: prize.value,
-    entry: entry.value,
-    time: time.value,
-    room: room.value,
-    pass: roompass.value
-  };
-
-  let data = JSON.parse(localStorage.getItem("matches")) || [];
-  data.push(match);
-
-  localStorage.setItem("matches", JSON.stringify(data));
-
-  alert("Match Saved ✅");
-
-  // clear fields
-  name.value="";
-  prize.value="";
-  entry.value="";
-  time.value="";
-  room.value="";
-  roompass.value="";
-
-  loadMatches();
-}
-
-// 📋 LOAD MATCHES
-function loadMatches(){
-  let data = JSON.parse(localStorage.getItem("matches")) || [];
-
+function loadRequests(){
+  let data = JSON.parse(localStorage.getItem("depositRequests")) || [];
   let html = "";
 
-  data.forEach((m,i)=>{
+  data.forEach((r, i) => {
     html += `
-      <div class="card">
-        <b>${m.name}</b><br>
-        Prize: ₹${m.prize}<br>
-        Entry: ₹${m.entry}<br>
-        Time: ${m.time}<br>
-        Room: ${m.room}<br>
+    <div class="box">
+      <p>Amount: ₹ ${r.amount}</p>
+      <p>Status: ${r.status}</p>
+      <p>Time: ${r.time}</p>
 
-        <button class="deleteBtn" onclick="deleteMatch(${i})">Delete</button>
-      </div>
+      ${r.status === "pending" ? `
+      <button class="approve" onclick="approve(${i})">Approve</button>
+      <button class="reject" onclick="reject(${i})">Reject</button>
+      ` : ""}
+    </div>
     `;
   });
 
-  document.getElementById("list").innerHTML = html;
+  document.getElementById("requests").innerHTML = html;
 }
 
-// ❌ DELETE MATCH
-function deleteMatch(i){
-  let data = JSON.parse(localStorage.getItem("matches")) || [];
-  data.splice(i,1);
-  localStorage.setItem("matches", JSON.stringify(data));
-  loadMatches();
+function approve(i){
+  let data = JSON.parse(localStorage.getItem("depositRequests"));
+  data[i].status = "approved";
+
+  // wallet update
+  let wallet = localStorage.getItem("wallet") || 0;
+  wallet = parseInt(wallet) + parseInt(data[i].amount);
+  localStorage.setItem("wallet", wallet);
+
+  localStorage.setItem("depositRequests", JSON.stringify(data));
+  loadRequests();
 }
+
+function reject(i){
+  let data = JSON.parse(localStorage.getItem("depositRequests"));
+  data[i].status = "rejected";
+
+  localStorage.setItem("depositRequests", JSON.stringify(data));
+  loadRequests();
+}
+
+loadRequests();
 
 </script>
 
