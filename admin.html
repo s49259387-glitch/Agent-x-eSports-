@@ -1,141 +1,167 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Admin Panel</title>
-
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<title>Admin Panel</title>
 
 <style>
 body{
-  margin:0;
-  font-family:sans-serif;
-  background:#0f172a;
+  font-family: Arial;
+  background:#1d1f3a;
   color:white;
+  padding:20px;
+  margin:0;
 }
 
-.card{
-  margin:15px;
-  padding:20px;
-  background:#1e293b;
-  border-radius:15px;
+h2{
+  text-align:center;
+}
+
+input,button{
+  width:100%;
+  padding:12px;
+  margin:6px 0;
+  border-radius:10px;
+  border:none;
+  font-size:15px;
+}
+
+input{
+  background:#2b2e5a;
+  color:white;
 }
 
 button{
+  background:cyan;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.card{
+  background:#2b2e5a;
   padding:10px;
-  border:none;
   border-radius:10px;
-  background:#22c55e;
-  color:white;
-  width:100%;
   margin-top:10px;
+}
+
+.deleteBtn{
+  background:red;
+  margin-top:5px;
 }
 </style>
 </head>
 
 <body>
 
-<h2 style="text-align:center;">👑 Admin Panel</h2>
+<h2>🔥 Admin Panel</h2>
 
-<!-- MATCH CREATE -->
-<div class="card">
-<h3>Create Match</h3>
-
-<input id="title" placeholder="Title">
-<input id="entry" placeholder="Entry">
-<input id="prize" placeholder="Prize">
-
-<button onclick="createMatch()">Create</button>
+<!-- LOGIN -->
+<div id="loginBox">
+  <input type="email" id="email" placeholder="Email">
+  <input type="password" id="pass" placeholder="Password">
+  <button onclick="login()">Login</button>
 </div>
 
-<!-- DEPOSITS -->
-<div class="card">
-<h3>💰 Deposit Requests</h3>
-<div id="deposits"></div>
+<!-- PANEL -->
+<div id="panel" style="display:none;">
+
+  <h3>Add Match</h3>
+
+  <input id="name" placeholder="Match Name">
+  <input id="prize" placeholder="Prize Pool">
+  <input id="entry" placeholder="Entry Fee">
+  <input id="time" type="datetime-local">
+  <input id="room" placeholder="Room ID">
+  <input id="roompass" placeholder="Password">
+
+  <button onclick="addMatch()">Save Match</button>
+
+  <h3>Saved Matches</h3>
+  <div id="list"></div>
+
 </div>
 
 <script>
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBWJuXY8A2jKKBrW4CnLdfU3Spx2U4GUU0",
-  authDomain: "battle-x-agent.firebaseapp.com",
-  projectId: "battle-x-agent"
-};
+// 🔐 LOGIN
+function login(){
+  let email = document.getElementById("email").value;
+  let pass = document.getElementById("pass").value;
 
-firebase.initializeApp(firebaseConfig);
-
-// CREATE MATCH
-function createMatch(){
-
-let title = document.getElementById("title").value;
-let entry = Number(document.getElementById("entry").value);
-let prize = Number(document.getElementById("prize").value);
-
-firebase.firestore().collection("matches").add({
-title:title,
-entry:entry,
-prize:prize,
-players:[]
-});
-
-alert("Match Created ✅");
+  if(email==="admin@gmail.com" && pass==="1234"){
+    document.getElementById("loginBox").style.display="none";
+    document.getElementById("panel").style.display="block";
+    loadMatches();
+  } else {
+    alert("Wrong Email or Password");
+  }
 }
 
-// LOAD DEPOSITS
-function loadDeposits(){
+// 💾 ADD MATCH
+function addMatch(){
+  if(!name.value || !prize.value || !entry.value || !time.value){
+    alert("Fill all fields");
+    return;
+  }
 
-let box = document.getElementById("deposits");
+  let match = {
+    name: name.value,
+    prize: prize.value,
+    entry: entry.value,
+    time: time.value,
+    room: room.value,
+    pass: roompass.value
+  };
 
-firebase.firestore().collection("deposits").onSnapshot(snap=>{
-box.innerHTML="";
+  let data = JSON.parse(localStorage.getItem("matches")) || [];
+  data.push(match);
 
-snap.forEach(doc=>{
-let d = doc.data();
+  localStorage.setItem("matches", JSON.stringify(data));
 
-box.innerHTML += `
-<div class="card">
-<b>${d.email}</b><br>
-₹${d.amount} | UTR: ${d.utr}<br>
-Status: ${d.status}
+  alert("Match Saved ✅");
 
-${d.status=="pending" ? `
-<button onclick="approve('${doc.id}','${d.uid}',${d.amount})">
-Approve
-</button>
-` : `<b>Approved ✅</b>`}
+  // clear fields
+  name.value="";
+  prize.value="";
+  entry.value="";
+  time.value="";
+  room.value="";
+  roompass.value="";
 
-</div>
-`;
-});
-});
+  loadMatches();
 }
 
-// APPROVE
-function approve(id, uid, amount){
+// 📋 LOAD MATCHES
+function loadMatches(){
+  let data = JSON.parse(localStorage.getItem("matches")) || [];
 
-let userRef = firebase.firestore().collection("users").doc(uid);
+  let html = "";
 
-// add money
-userRef.get().then(doc=>{
-let bal = doc.data().wallet || 0;
+  data.forEach((m,i)=>{
+    html += `
+      <div class="card">
+        <b>${m.name}</b><br>
+        Prize: ₹${m.prize}<br>
+        Entry: ₹${m.entry}<br>
+        Time: ${m.time}<br>
+        Room: ${m.room}<br>
 
-let newBal = bal + amount;
-userRef.update({wallet:newBal});
+        <button class="deleteBtn" onclick="deleteMatch(${i})">Delete</button>
+      </div>
+    `;
+  });
 
-// update deposit status
-firebase.firestore().collection("deposits").doc(id).update({
-status:"approved"
-});
-
-alert("Amount Added ✅");
-
-});
+  document.getElementById("list").innerHTML = html;
 }
 
-// LOAD
-loadDeposits();
+// ❌ DELETE MATCH
+function deleteMatch(i){
+  let data = JSON.parse(localStorage.getItem("matches")) || [];
+  data.splice(i,1);
+  localStorage.setItem("matches", JSON.stringify(data));
+  loadMatches();
+}
 
 </script>
 
