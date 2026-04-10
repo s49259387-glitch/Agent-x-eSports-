@@ -60,7 +60,7 @@ if(localStorage.getItem("login") !== "yes"){
   <div>🔥 Agent X eSports</div>
   <div>
     <span class="walletBox" id="walletBalance">₹ 0</span>
-    <span onclick="logout()">🚪</span>
+    <span onclick="logout()" style="cursor:pointer;">🚪</span>
   </div>
 </div>
 
@@ -96,28 +96,39 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// USER ID
-let userId = localStorage.getItem("userId") || "user_" + Date.now();
-localStorage.setItem("userId", userId);
+// ✅ USER ID FIX (unique & stable)
+let userId = localStorage.getItem("userId");
+if(!userId){
+  userId = "user_" + Date.now();
+  localStorage.setItem("userId", userId);
+}
 
-// WALLET LOAD
+// ✅ WALLET LOAD SAFE
 async function loadWallet(){
-  const ref = doc(db, "wallets", userId);
-  const snap = await getDoc(ref);
+  try{
+    const ref = doc(db, "wallets", userId);
+    const snap = await getDoc(ref);
 
-  if(snap.exists()){
-    document.getElementById("walletBalance").innerText = "₹ " + snap.data().balance;
-  } else {
-    await setDoc(ref, { balance: 0 });
-    document.getElementById("walletBalance").innerText = "₹ 0";
+    if(snap.exists()){
+      document.getElementById("walletBalance").innerText = "₹ " + snap.data().balance;
+    } else {
+      await setDoc(ref, { balance: 0 });
+      document.getElementById("walletBalance").innerText = "₹ 0";
+    }
+  }catch(err){
+    alert("Error loading wallet ❌");
+    console.log(err);
   }
 }
 loadWallet();
 
-// DEPOSIT
+// ✅ DEPOSIT
 window.deposit = async function(){
   let amt = prompt("Enter Amount");
-  if(!amt || amt<=0) return;
+  if(!amt || amt<=0){
+    alert("Invalid amount ❌");
+    return;
+  }
 
   await addDoc(collection(db, "requests"), {
     userId,
@@ -129,10 +140,23 @@ window.deposit = async function(){
   alert("Deposit Request Sent ✅");
 }
 
-// WITHDRAW
+// ✅ WITHDRAW (balance check added)
 window.withdraw = async function(){
   let amt = prompt("Enter Amount");
-  if(!amt || amt<=0) return;
+  if(!amt || amt<=0){
+    alert("Invalid amount ❌");
+    return;
+  }
+
+  const ref = doc(db, "wallets", userId);
+  const snap = await getDoc(ref);
+
+  let bal = snap.data().balance;
+
+  if(amt > bal){
+    alert("Insufficient Balance ❌");
+    return;
+  }
 
   await addDoc(collection(db, "requests"), {
     userId,
@@ -144,12 +168,13 @@ window.withdraw = async function(){
   alert("Withdraw Request Sent ✅");
 }
 
-// ADMIN PANEL
+// ✅ ADMIN PANEL
 if(localStorage.getItem("role")==="admin"){
   document.getElementById("adminPanel").style.display="block";
   loadRequests();
 }
 
+// ✅ LOAD REQUESTS SAFE
 async function loadRequests(){
   let snap = await getDocs(collection(db, "requests"));
   let box = document.getElementById("requests");
@@ -159,14 +184,16 @@ async function loadRequests(){
     let d = docSnap.data();
 
     box.innerHTML += `
-    <div style="background:#333;margin:10px;padding:10px;">
+    <div style="background:#333;margin:10px;padding:10px;border-radius:10px;">
       ₹${d.amount} (${d.type}) - ${d.status}
-      <button onclick="approve('${docSnap.id}','${d.userId}',${d.amount},'${d.type}')">Approve</button>
+      ${d.status === "pending" ? 
+      `<button onclick="approve('${docSnap.id}','${d.userId}',${d.amount},'${d.type}')">Approve</button>` : 
+      `<span style="color:lightgreen;">✔ Approved</span>`}
     </div>`;
   });
 }
 
-// APPROVE
+// ✅ APPROVE FIX (safe update)
 window.approve = async function(id, uid, amt, type){
 
   const reqRef = doc(db,"requests",id);
@@ -175,19 +202,20 @@ window.approve = async function(id, uid, amt, type){
   const walletRef = doc(db,"wallets",uid);
   const snap = await getDoc(walletRef);
 
-  let bal = snap.data().balance;
+  let bal = snap.exists() ? snap.data().balance : 0;
 
   if(type==="deposit") bal += amt;
   else bal -= amt;
 
-  await updateDoc(walletRef,{balance:bal});
+  await setDoc(walletRef,{balance:bal});
 
   alert("Approved ✅");
+
   loadRequests();
   loadWallet();
 }
 
-// LOGOUT
+// ✅ LOGOUT
 window.logout = function(){
   localStorage.clear();
   window.location.href="login.html";
