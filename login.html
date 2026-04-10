@@ -59,16 +59,16 @@ button{
 <div class="box">
   <h2 id="title">🔥 Agent X Login</h2>
 
-  <!-- LOGIN FORM -->
+  <!-- LOGIN -->
   <form id="loginForm" onsubmit="login(event)">
-    <input type="text" id="loginUser" placeholder="Enter Email">
+    <input type="email" id="loginUser" placeholder="Enter Email">
     <input type="password" id="loginPass" placeholder="Enter Password">
     <button type="submit">Login</button>
   </form>
 
-  <!-- REGISTER FORM -->
+  <!-- REGISTER -->
   <form id="registerForm" style="display:none;" onsubmit="register(event)">
-    <input type="text" id="regUser" placeholder="Enter Email">
+    <input type="email" id="regUser" placeholder="Enter Email">
     <input type="password" id="regPass" placeholder="Enter Password">
     <button type="submit">Register</button>
   </form>
@@ -76,10 +76,29 @@ button{
   <div class="switch" onclick="toggleForm()">Create Account / Login</div>
 </div>
 
-<script>
+<!-- 🔥 FIREBASE SDK -->
+<script type="module">
 
-// 🔄 SWITCH LOGIN/REGISTER
-function toggleForm(){
+// ✅ IMPORTS
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+// 🔥 TERA FIREBASE CONFIG
+const firebaseConfig = {
+  apiKey: "AIzaSyDbEHxzNCGHbCYFDESVX_qtaoiO2e0qMyM",
+  authDomain: "agent-x-d7f22.firebaseapp.com",
+  projectId: "agent-x-d7f22",
+  storageBucket: "agent-x-d7f22.firebasestorage.app",
+  messagingSenderId: "1055506789692",
+  appId: "1:1055506789692:web:72a9df8c2cf9a57c92da39"
+};
+
+// INIT
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+// 🔄 SWITCH
+window.toggleForm = function(){
   let loginForm = document.getElementById("loginForm");
   let registerForm = document.getElementById("registerForm");
   let title = document.getElementById("title");
@@ -96,74 +115,44 @@ function toggleForm(){
 }
 
 // 🔐 LOGIN
-function login(e){
+window.login = function(e){
   e.preventDefault();
 
-  let u = document.getElementById("loginUser").value;
-  let p = document.getElementById("loginPass").value;
+  let email = document.getElementById("loginUser").value;
+  let pass = document.getElementById("loginPass").value;
 
-  if(u=="" || p==""){
-    alert("Fill all fields ❌");
-    return;
-  }
+  signInWithEmailAndPassword(auth, email, pass)
+  .then((userCredential) => {
 
-  // 👑 ADMIN LOGIN (fixed)
-  if(u === "satyam@gmail.com" && p === "1234"){
-    localStorage.setItem("login", "yes");
-    localStorage.setItem("role", "admin");
-
-    alert("Admin Login Successful ✅");
-    window.location.href = "index.html";
-    return;
-  }
-
-  // 👤 USER LOGIN
-  let data = JSON.parse(localStorage.getItem("users")) || [];
-
-  let found = data.find(x => x.user === u && x.pass === p);
-
-  if(found){
     localStorage.setItem("login", "yes");
     localStorage.setItem("role", "user");
 
     alert("Login Successful ✅");
     window.location.href = "index.html";
-  } else {
-    alert("Wrong Email or Password ❌");
-  }
+
+  })
+  .catch((error) => {
+    alert("Login Failed ❌ " + error.message);
+  });
 }
 
 // 📝 REGISTER
-function register(e){
+window.register = function(e){
   e.preventDefault();
 
-  let u = document.getElementById("regUser").value;
-  let p = document.getElementById("regPass").value;
+  let email = document.getElementById("regUser").value;
+  let pass = document.getElementById("regPass").value;
 
-  if(u=="" || p==""){
-    alert("Fill all fields ❌");
-    return;
-  }
+  createUserWithEmailAndPassword(auth, email, pass)
+  .then((userCredential) => {
 
-  let data = JSON.parse(localStorage.getItem("users")) || [];
+    alert("Registered Successfully ✅");
+    toggleForm();
 
-  // duplicate check
-  let exist = data.find(x => x.user === u);
-  if(exist){
-    alert("User already exists ❌");
-    return;
-  }
-
-  data.push({
-    user: u,
-    pass: p
+  })
+  .catch((error) => {
+    alert("Register Failed ❌ " + error.message);
   });
-
-  localStorage.setItem("users", JSON.stringify(data));
-
-  alert("Registered Successfully ✅");
-
-  toggleForm(); // वापस login पे
 }
 
 </script>
