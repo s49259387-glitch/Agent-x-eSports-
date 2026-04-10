@@ -5,10 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Agent X eSports</title>
 
-<!-- 🔥 FIREBASE -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-
 <style>
 body {
   margin: 0;
@@ -17,16 +13,19 @@ body {
   color: white;
   padding-bottom: 70px;
 }
+
 .header {
   display: flex;
   justify-content: space-between;
   padding: 15px;
 }
+
 .walletBox {
   border: 2px solid cyan;
   border-radius: 20px;
   padding: 5px 12px;
 }
+
 .joinBtn {
   width: 100%;
   padding: 12px;
@@ -34,7 +33,9 @@ body {
   border: none;
   border-radius: 10px;
   margin-top: 10px;
+  font-weight: bold;
 }
+
 .navbar {
   position: fixed;
   bottom: 0;
@@ -43,19 +44,6 @@ body {
   display: flex;
   justify-content: space-around;
   padding: 10px 0;
-}
-.popup {
-  position: fixed;
-  top:0;left:0;width:100%;height:100%;
-  background: rgba(0,0,0,0.7);
-  display:none;
-  justify-content:center;
-  align-items:center;
-}
-.popupBox {
-  background:#222;
-  padding:20px;
-  border-radius:10px;
 }
 </style>
 </head>
@@ -68,7 +56,6 @@ if(localStorage.getItem("login") !== "yes"){
 }
 </script>
 
-<!-- HEADER -->
 <div class="header">
   <div>🔥 Agent X eSports</div>
   <div>
@@ -77,52 +64,26 @@ if(localStorage.getItem("login") !== "yes"){
   </div>
 </div>
 
-<!-- MATCH -->
 <div style="padding:15px;">
-  <h3>Match 1</h3>
-  <button class="joinBtn" onclick="openJoinPopup()">Join Match</button>
+  <button class="joinBtn" onclick="deposit()">Deposit</button>
+  <button class="joinBtn" onclick="withdraw()">Withdraw</button>
 </div>
 
-<!-- WALLET -->
-<div style="padding:15px;">
-  <button class="joinBtn" onclick="toggleDeposit()">Deposit</button>
-  <button class="joinBtn" onclick="toggleWithdraw()">Withdraw</button>
-
-  <div id="depositBox" style="display:none;">
-    <input id="amount" type="number" placeholder="Amount">
-    <button class="joinBtn" onclick="sendDeposit()">Send Deposit</button>
-  </div>
-
-  <div id="withdrawBox" style="display:none;">
-    <input id="withdrawAmount" type="number" placeholder="Withdraw Amount">
-    <button class="joinBtn" onclick="sendWithdraw()">Send Withdraw</button>
-  </div>
-</div>
-
-<!-- ADMIN -->
-<div style="padding:15px;">
+<div id="adminPanel" style="padding:15px; display:none;">
   <h3>Admin Panel</h3>
-  <div id="requestList"></div>
+  <div id="requests"></div>
 </div>
 
-<!-- JOIN POPUP -->
-<div id="joinPopup" class="popup">
-  <div class="popupBox">
-    <h3>Enter Details</h3>
-    <input id="uid" placeholder="Gaming UID"><br><br>
-    <input id="gameName" placeholder="Game Name"><br><br>
-    <button onclick="submitJoin()">Submit</button>
-  </div>
-</div>
-
-<!-- NAV -->
 <div class="navbar">
-  <div onclick="location.reload()">🏠</div>
+  <div onclick="location.reload()">🏠 Home</div>
 </div>
 
-<script>
+<!-- FIREBASE -->
+<script type="module">
 
-// 🔥 FIREBASE CONFIG
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
 const firebaseConfig = {
   apiKey: "AIzaSyDbEHxzNCGHbCYFDESVX_qtaoiO2e0qMyM",
   authDomain: "agent-x-d7f22.firebaseapp.com",
@@ -132,93 +93,104 @@ const firebaseConfig = {
   appId: "1:1055506789692:web:72a9df8c2cf9a57c92da39"
 };
 
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-// WALLET INIT
-if(!localStorage.getItem("wallet")){
-  localStorage.setItem("wallet","0");
+// USER ID
+let userId = localStorage.getItem("userId") || "user_" + Date.now();
+localStorage.setItem("userId", userId);
+
+// WALLET LOAD
+async function loadWallet(){
+  const ref = doc(db, "wallets", userId);
+  const snap = await getDoc(ref);
+
+  if(snap.exists()){
+    document.getElementById("walletBalance").innerText = "₹ " + snap.data().balance;
+  } else {
+    await setDoc(ref, { balance: 0 });
+    document.getElementById("walletBalance").innerText = "₹ 0";
+  }
+}
+loadWallet();
+
+// DEPOSIT
+window.deposit = async function(){
+  let amt = prompt("Enter Amount");
+  if(!amt || amt<=0) return;
+
+  await addDoc(collection(db, "requests"), {
+    userId,
+    type: "deposit",
+    amount: Number(amt),
+    status: "pending"
+  });
+
+  alert("Deposit Request Sent ✅");
 }
 
-function updateWallet(){
-  document.getElementById("walletBalance").innerText =
-    "₹ "+localStorage.getItem("wallet");
-}
-updateWallet();
+// WITHDRAW
+window.withdraw = async function(){
+  let amt = prompt("Enter Amount");
+  if(!amt || amt<=0) return;
 
-function logout(){
+  await addDoc(collection(db, "requests"), {
+    userId,
+    type: "withdraw",
+    amount: Number(amt),
+    status: "pending"
+  });
+
+  alert("Withdraw Request Sent ✅");
+}
+
+// ADMIN PANEL
+if(localStorage.getItem("role")==="admin"){
+  document.getElementById("adminPanel").style.display="block";
+  loadRequests();
+}
+
+async function loadRequests(){
+  let snap = await getDocs(collection(db, "requests"));
+  let box = document.getElementById("requests");
+  box.innerHTML = "";
+
+  snap.forEach(docSnap=>{
+    let d = docSnap.data();
+
+    box.innerHTML += `
+    <div style="background:#333;margin:10px;padding:10px;">
+      ₹${d.amount} (${d.type}) - ${d.status}
+      <button onclick="approve('${docSnap.id}','${d.userId}',${d.amount},'${d.type}')">Approve</button>
+    </div>`;
+  });
+}
+
+// APPROVE
+window.approve = async function(id, uid, amt, type){
+
+  const reqRef = doc(db,"requests",id);
+  await updateDoc(reqRef,{status:"approved"});
+
+  const walletRef = doc(db,"wallets",uid);
+  const snap = await getDoc(walletRef);
+
+  let bal = snap.data().balance;
+
+  if(type==="deposit") bal += amt;
+  else bal -= amt;
+
+  await updateDoc(walletRef,{balance:bal});
+
+  alert("Approved ✅");
+  loadRequests();
+  loadWallet();
+}
+
+// LOGOUT
+window.logout = function(){
   localStorage.clear();
   window.location.href="login.html";
-}
-
-// TOGGLE
-function toggleDeposit(){
-  let b=document.getElementById("depositBox");
-  b.style.display=b.style.display==="block"?"none":"block";
-}
-function toggleWithdraw(){
-  let b=document.getElementById("withdrawBox");
-  b.style.display=b.style.display==="block"?"none":"block";
-}
-
-// 💰 DEPOSIT
-function sendDeposit(){
-  let amt=document.getElementById("amount").value;
-  if(amt<=0) return alert("Enter valid amount");
-
-  db.ref("deposits").push({amount:amt,status:"pending"});
-  alert("Deposit Sent ✅");
-}
-
-// 💸 WITHDRAW
-function sendWithdraw(){
-  let amt=document.getElementById("withdrawAmount").value;
-  let bal=Number(localStorage.getItem("wallet"));
-
-  if(amt<=0) return alert("Invalid");
-  if(amt>bal) return alert("Low Balance");
-
-  db.ref("withdraws").push({amount:amt,status:"pending"});
-  alert("Withdraw Sent ✅");
-}
-
-// 👑 ADMIN LOAD
-function loadRequests(){
-  let box=document.getElementById("requestList");
-  box.innerHTML="";
-
-  db.ref("deposits").on("value",snap=>{
-    box.innerHTML="";
-    snap.forEach(c=>{
-      let d=c.val();
-      box.innerHTML+=`<div>₹${d.amount} Deposit (${d.status})</div>`;
-    });
-  });
-
-  db.ref("withdraws").on("value",snap=>{
-    snap.forEach(c=>{
-      let d=c.val();
-      box.innerHTML+=`<div>₹${d.amount} Withdraw (${d.status})</div>`;
-    });
-  });
-}
-loadRequests();
-
-// 🎮 JOIN POPUP
-function openJoinPopup(){
-  document.getElementById("joinPopup").style.display="flex";
-}
-
-function submitJoin(){
-  let uid=document.getElementById("uid").value;
-  let name=document.getElementById("gameName").value;
-
-  if(uid==""||name=="") return alert("Fill all");
-
-  db.ref("players").push({uid,name});
-
-  alert("Joined Successfully ✅");
-  document.getElementById("joinPopup").style.display="none";
 }
 
 </script>
