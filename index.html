@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Agent X eSports</title>
 
+<!-- 🔥 FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
 <style>
 body {
   margin: 0;
@@ -13,54 +17,24 @@ body {
   color: white;
   padding-bottom: 70px;
 }
-
 .header {
   display: flex;
   justify-content: space-between;
   padding: 15px;
-  font-size: 18px;
 }
-
 .walletBox {
   border: 2px solid cyan;
   border-radius: 20px;
   padding: 5px 12px;
 }
-
-.banner img {
+.joinBtn {
   width: 100%;
-  border-radius: 15px;
+  padding: 12px;
+  background: cyan;
+  border: none;
+  border-radius: 10px;
+  margin-top: 10px;
 }
-
-.sectionTitle {
-  text-align: center;
-  margin: 20px 0;
-}
-
-.matchGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  padding: 10px;
-}
-
-.matchCard {
-  background: #3a3d6b;
-  border-radius: 15px;
-  overflow: hidden;
-}
-
-.matchCard img {
-  width: 100%;
-  height: 120px;
-  object-fit: cover;
-}
-
-.matchCard p {
-  text-align: center;
-  padding: 10px;
-}
-
 .navbar {
   position: fixed;
   bottom: 0;
@@ -70,43 +44,18 @@ body {
   justify-content: space-around;
   padding: 10px 0;
 }
-
-.matchBox {
-  background: #3a3d6b;
-  border-radius: 20px;
-  padding: 15px;
-  margin-bottom: 15px;
-  box-shadow: 0 0 15px cyan;
+.popup {
+  position: fixed;
+  top:0;left:0;width:100%;height:100%;
+  background: rgba(0,0,0,0.7);
+  display:none;
+  justify-content:center;
+  align-items:center;
 }
-
-.row {
-  display: flex;
-  justify-content: space-between;
-  margin: 6px 0;
-}
-
-.joinBtn {
-  width: 100%;
-  padding: 12px;
-  background: cyan;
-  border: none;
-  border-radius: 10px;
-  margin-top: 10px;
-  font-weight: bold;
-}
-
-.detailsBox {
-  background: #222;
-  padding: 10px;
-  border-radius: 10px;
-  margin-top: 10px;
-  display: none;
-}
-
-.timer {
-  text-align: center;
-  margin-top: 10px;
-  color: cyan;
+.popupBox {
+  background:#222;
+  padding:20px;
+  border-radius:10px;
 }
 </style>
 </head>
@@ -124,270 +73,152 @@ if(localStorage.getItem("login") !== "yes"){
   <div>🔥 Agent X eSports</div>
   <div>
     <span class="walletBox" id="walletBalance">₹ 0</span>
-    <span onclick="logout()" style="margin-left:10px;cursor:pointer;">🚪</span>
+    <span onclick="logout()">🚪</span>
   </div>
 </div>
 
-<!-- HOME -->
-<div id="home">
-  <div class="banner">
-    <img src="https://i.postimg.cc/htcg0Zd2/file-000000009a8c7208a5891d21e8cc7c9c.png">
-  </div>
-
-  <h2 class="sectionTitle">Select Match Type</h2>
-
-  <div class="matchGrid">
-    <div class="matchCard" onclick="openMatch()">
-      <img src="https://i.ibb.co/sdYpQbFt/Screenshot-20260408-232023.jpg">
-      <p>Lone wolf (1v1)</p>
-    </div>
-
-    <div class="matchCard" onclick="openMatch()">
-      <img src="https://i.ibb.co/sdYpQbFt/Screenshot-20260408-232023.jpg">
-      <p>Full map 2.0</p>
-    </div>
-  </div>
-</div>
-
-<!-- MATCH DETAILS -->
-<div id="matchDetails" style="display:none; padding:15px;">
-  <div onclick="goHome()">← Back</div>
-
-  <div class="matchBox">
-    <h3>Match 1</h3>
-
-    <div class="row"><span>Prize Pool</span><span>₹ 55</span></div>
-    <div class="row"><span>Per Kill</span><span>₹ 0</span></div>
-    <div class="row"><span>Entry Fee</span><span>₹ 10</span></div>
-
-    <button class="joinBtn" onclick="joinMatch()">Join Match</button>
-
-    <div id="timer" class="timer"></div>
-
-    <button class="joinBtn" onclick="toggleDetails()">Details</button>
-
-    <div id="details" class="detailsBox">
-      Room ID: 123456<br>
-      Password: 9999
-    </div>
-  </div>
+<!-- MATCH -->
+<div style="padding:15px;">
+  <h3>Match 1</h3>
+  <button class="joinBtn" onclick="openJoinPopup()">Join Match</button>
 </div>
 
 <!-- WALLET -->
-<div id="walletPage" style="display:none; padding:15px;">
-  <div onclick="goHome()">← Back</div>
-
-  <h2>Wallet</h2>
-
+<div style="padding:15px;">
   <button class="joinBtn" onclick="toggleDeposit()">Deposit</button>
   <button class="joinBtn" onclick="toggleWithdraw()">Withdraw</button>
 
-  <div id="depositBox" style="display:none; text-align:center; margin-top:15px;">
-    <input type="number" id="amount" placeholder="Enter Amount"
-    style="width:80%; padding:10px; border-radius:8px; border:none;">
-
-    <div id="qrBox" style="display:none; margin-top:15px;">
-      <p>Scan & Pay</p>
-      <img src="https://i.postimg.cc/PrJF6wH6/Screenshot-20260409-163237.jpg"
-      style="width:220px; border-radius:10px;">
-      <p>UPI ID: 7985393071-k62e@ybl</p>
-      <p>Name: DURGESH SHARMA</p>
-
-      <button class="joinBtn" onclick="sendDeposit()">Send Request</button>
-    </div>
+  <div id="depositBox" style="display:none;">
+    <input id="amount" type="number" placeholder="Amount">
+    <button class="joinBtn" onclick="sendDeposit()">Send Deposit</button>
   </div>
 
-  <div id="withdrawBox" style="display:none; text-align:center; margin-top:15px;">
-    <input type="number" id="withdrawAmount" placeholder="Enter Withdraw Amount"
-    style="width:80%; padding:10px; border-radius:8px; border:none;">
-    <button class="joinBtn" onclick="sendWithdraw()">Send Withdraw Request</button>
+  <div id="withdrawBox" style="display:none;">
+    <input id="withdrawAmount" type="number" placeholder="Withdraw Amount">
+    <button class="joinBtn" onclick="sendWithdraw()">Send Withdraw</button>
   </div>
 </div>
 
-<!-- ADMIN PANEL -->
-<div id="adminPanel" style="display:none; padding:15px;">
-  <div onclick="goHome()">← Back</div>
-  <h2>Admin Panel</h2>
+<!-- ADMIN -->
+<div style="padding:15px;">
+  <h3>Admin Panel</h3>
   <div id="requestList"></div>
 </div>
 
-<!-- 🔥 JOIN POPUP -->
-<div id="joinPopup" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);justify-content:center;align-items:center;z-index:999;">
-  <div style="background:#2b2e5a;padding:20px;border-radius:15px;width:85%;max-width:300px;text-align:center;">
-    <h3>Join Match</h3>
-    <input type="text" id="gameUID" placeholder="Enter Gaming UID" style="width:100%;padding:10px;margin:8px 0;border-radius:8px;border:none;">
-    <input type="text" id="gameName" placeholder="Enter Game Name" style="width:100%;padding:10px;margin:8px 0;border-radius:8px;border:none;">
-    <button class="joinBtn" onclick="submitJoin()">Submit</button>
-    <button class="joinBtn" onclick="closePopup()" style="background:red;">Cancel</button>
+<!-- JOIN POPUP -->
+<div id="joinPopup" class="popup">
+  <div class="popupBox">
+    <h3>Enter Details</h3>
+    <input id="uid" placeholder="Gaming UID"><br><br>
+    <input id="gameName" placeholder="Game Name"><br><br>
+    <button onclick="submitJoin()">Submit</button>
   </div>
 </div>
 
-<!-- NAVBAR -->
+<!-- NAV -->
 <div class="navbar">
-  <div onclick="goHome()">🏠 Home</div>
-  <div onclick="openMatch()">🎮 Matches</div>
-  <div onclick="openWallet()">💰 Wallet</div>
-  <div id="adminPanelBtn" onclick="openAdmin()" style="display:none;">👑 Admin</div>
-  <div onclick="alert('Settings coming soon')">⚙️ Settings</div>
+  <div onclick="location.reload()">🏠</div>
 </div>
 
 <script>
 
-function logout(){
-  localStorage.clear();
-  window.location.href = "login.html";
-}
+// 🔥 FIREBASE CONFIG
+const firebaseConfig = {
+  apiKey: "AIzaSyDbEHxzNCGHbCYFDESVX_qtaoiO2e0qMyM",
+  authDomain: "agent-x-d7f22.firebaseapp.com",
+  projectId: "agent-x-d7f22",
+  storageBucket: "agent-x-d7f22.firebasestorage.app",
+  messagingSenderId: "1055506789692",
+  appId: "1:1055506789692:web:72a9df8c2cf9a57c92da39"
+};
 
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// WALLET INIT
 if(!localStorage.getItem("wallet")){
   localStorage.setItem("wallet","0");
 }
 
-function updateWalletUI(){
+function updateWallet(){
   document.getElementById("walletBalance").innerText =
-    "₹ " + localStorage.getItem("wallet");
+    "₹ "+localStorage.getItem("wallet");
+}
+updateWallet();
+
+function logout(){
+  localStorage.clear();
+  window.location.href="login.html";
 }
 
-window.onload = function(){
-  if(localStorage.getItem("role")==="admin"){
-    document.getElementById("adminPanelBtn").style.display="block";
-  }
-  updateWalletUI();
-};
-
-function openMatch(){hideAll(); document.getElementById("matchDetails").style.display="block";}
-function goHome(){hideAll(); document.getElementById("home").style.display="block";}
-function openWallet(){hideAll(); document.getElementById("walletPage").style.display="block";}
-function openAdmin(){hideAll(); document.getElementById("adminPanel").style.display="block"; loadRequests();}
-
-function hideAll(){
-  document.getElementById("home").style.display="none";
-  document.getElementById("matchDetails").style.display="none";
-  document.getElementById("walletPage").style.display="none";
-  document.getElementById("adminPanel").style.display="none";
-}
-
-/* 🔥 UPDATED JOIN */
-function joinMatch(){
-  document.getElementById("joinPopup").style.display="flex";
-}
-
-function closePopup(){
-  document.getElementById("joinPopup").style.display="none";
-}
-
-function submitJoin(){
-  let uid=document.getElementById("gameUID").value;
-  let name=document.getElementById("gameName").value;
-
-  if(uid==""||name==""){alert("Fill all details ❌");return;}
-
-  let players=JSON.parse(localStorage.getItem("joined_players"))||[];
-  players.push({uid,name});
-  localStorage.setItem("joined_players",JSON.stringify(players));
-
-  alert("Joined Successfully ✅");
-  closePopup();
-
-  startTimer();
-}
-
-function startTimer(){
-  let t=10;
-  let timer=document.getElementById("timer");
-  let i=setInterval(()=>{
-    timer.innerText="Match starts in: "+t+"s";
-    t--;
-    if(t<0){clearInterval(i); timer.innerText="Match Started!";}
-  },1000);
-}
-
-function toggleDetails(){
-  let b=document.getElementById("details");
-  b.style.display=b.style.display==="block"?"none":"block";
-}
-
+// TOGGLE
 function toggleDeposit(){
   let b=document.getElementById("depositBox");
   b.style.display=b.style.display==="block"?"none":"block";
 }
-
-document.addEventListener("input",function(e){
-  if(e.target.id==="amount"){
-    document.getElementById("qrBox").style.display =
-      e.target.value>0?"block":"none";
-  }
-});
-
-function sendDeposit(){
-  let amt=document.getElementById("amount").value;
-  if(amt<=0){alert("Enter valid amount");return;}
-
-  let d=JSON.parse(localStorage.getItem("deposit_requests"))||[];
-  d.push({amount:amt,status:"pending"});
-  localStorage.setItem("deposit_requests",JSON.stringify(d));
-
-  alert("Deposit Request Sent ✅");
-}
-
 function toggleWithdraw(){
   let b=document.getElementById("withdrawBox");
   b.style.display=b.style.display==="block"?"none":"block";
 }
 
+// 💰 DEPOSIT
+function sendDeposit(){
+  let amt=document.getElementById("amount").value;
+  if(amt<=0) return alert("Enter valid amount");
+
+  db.ref("deposits").push({amount:amt,status:"pending"});
+  alert("Deposit Sent ✅");
+}
+
+// 💸 WITHDRAW
 function sendWithdraw(){
   let amt=document.getElementById("withdrawAmount").value;
   let bal=Number(localStorage.getItem("wallet"));
 
-  if(amt<=0){alert("Enter valid amount");return;}
-  if(amt>bal){alert("Insufficient Balance ❌");return;}
+  if(amt<=0) return alert("Invalid");
+  if(amt>bal) return alert("Low Balance");
 
-  let d=JSON.parse(localStorage.getItem("withdraw_requests"))||[];
-  d.push({amount:amt,status:"pending"});
-  localStorage.setItem("withdraw_requests",JSON.stringify(d));
-
-  alert("Withdraw Request Sent ✅");
+  db.ref("withdraws").push({amount:amt,status:"pending"});
+  alert("Withdraw Sent ✅");
 }
 
+// 👑 ADMIN LOAD
 function loadRequests(){
   let box=document.getElementById("requestList");
   box.innerHTML="";
 
-  let dep=JSON.parse(localStorage.getItem("deposit_requests"))||[];
-  let wit=JSON.parse(localStorage.getItem("withdraw_requests"))||[];
-
-  dep.forEach((i,x)=>{
-    box.innerHTML+=`<div style="background:#3a3d6b;padding:10px;margin:10px;border-radius:10px;">₹${i.amount} (Deposit - ${i.status})<button onclick="approve(${x})">✅</button></div>`;
+  db.ref("deposits").on("value",snap=>{
+    box.innerHTML="";
+    snap.forEach(c=>{
+      let d=c.val();
+      box.innerHTML+=`<div>₹${d.amount} Deposit (${d.status})</div>`;
+    });
   });
 
-  wit.forEach((i,x)=>{
-    box.innerHTML+=`<div style="background:#5a3d3d;padding:10px;margin:10px;border-radius:10px;">₹${i.amount} (Withdraw - ${i.status})<button onclick="approveWithdraw(${x})">✅</button></div>`;
+  db.ref("withdraws").on("value",snap=>{
+    snap.forEach(c=>{
+      let d=c.val();
+      box.innerHTML+=`<div>₹${d.amount} Withdraw (${d.status})</div>`;
+    });
   });
 }
+loadRequests();
 
-function approve(i){
-  let d=JSON.parse(localStorage.getItem("deposit_requests"));
-  let amt=Number(d[i].amount);
-
-  d[i].status="approved";
-  localStorage.setItem("deposit_requests",JSON.stringify(d));
-
-  let bal=Number(localStorage.getItem("wallet"));
-  localStorage.setItem("wallet",bal+amt);
-
-  loadRequests(); updateWalletUI();
+// 🎮 JOIN POPUP
+function openJoinPopup(){
+  document.getElementById("joinPopup").style.display="flex";
 }
 
-function approveWithdraw(i){
-  let d=JSON.parse(localStorage.getItem("withdraw_requests"));
-  let amt=Number(d[i].amount);
+function submitJoin(){
+  let uid=document.getElementById("uid").value;
+  let name=document.getElementById("gameName").value;
 
-  d[i].status="approved";
-  localStorage.setItem("withdraw_requests",JSON.stringify(d));
+  if(uid==""||name=="") return alert("Fill all");
 
-  let bal=Number(localStorage.getItem("wallet"));
-  localStorage.setItem("wallet",bal-amt);
+  db.ref("players").push({uid,name});
 
-  loadRequests(); updateWalletUI();
+  alert("Joined Successfully ✅");
+  document.getElementById("joinPopup").style.display="none";
 }
 
 </script>
