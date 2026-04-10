@@ -11,7 +11,7 @@ body {
   font-family: Arial;
   background: linear-gradient(#1d1f3a,#2b2e5a);
   color: white;
-  padding-bottom: 70px;
+  padding-bottom: 120px; /* 🔥 FIX */
 }
 
 .header {
@@ -38,7 +38,7 @@ body {
 
 .navbar {
   position: fixed;
-  bottom: 0;
+  bottom: 60px; /* 🔥 ads fix */
   width: 100%;
   background: #1d1f3a;
   display: flex;
@@ -51,7 +51,8 @@ body {
 <body>
 
 <script>
-if(localStorage.getItem("login") !== "yes"){
+// ✅ FIXED LOGIN CHECK
+if(!localStorage.getItem("login")){
   window.location.href = "login.html";
 }
 </script>
@@ -96,14 +97,14 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// ✅ USER ID FIX (unique & stable)
+// ✅ USER ID FIX
 let userId = localStorage.getItem("userId");
 if(!userId){
   userId = "user_" + Date.now();
   localStorage.setItem("userId", userId);
 }
 
-// ✅ WALLET LOAD SAFE
+// ✅ WALLET LOAD
 async function loadWallet(){
   try{
     const ref = doc(db, "wallets", userId);
@@ -116,8 +117,8 @@ async function loadWallet(){
       document.getElementById("walletBalance").innerText = "₹ 0";
     }
   }catch(err){
-    alert("Error loading wallet ❌");
     console.log(err);
+    alert("Wallet load error ❌");
   }
 }
 loadWallet();
@@ -125,10 +126,7 @@ loadWallet();
 // ✅ DEPOSIT
 window.deposit = async function(){
   let amt = prompt("Enter Amount");
-  if(!amt || amt<=0){
-    alert("Invalid amount ❌");
-    return;
-  }
+  if(!amt || amt<=0) return alert("Invalid amount ❌");
 
   await addDoc(collection(db, "requests"), {
     userId,
@@ -140,23 +138,17 @@ window.deposit = async function(){
   alert("Deposit Request Sent ✅");
 }
 
-// ✅ WITHDRAW (balance check added)
+// ✅ WITHDRAW
 window.withdraw = async function(){
   let amt = prompt("Enter Amount");
-  if(!amt || amt<=0){
-    alert("Invalid amount ❌");
-    return;
-  }
+  if(!amt || amt<=0) return alert("Invalid amount ❌");
 
   const ref = doc(db, "wallets", userId);
   const snap = await getDoc(ref);
 
-  let bal = snap.data().balance;
+  let bal = snap.exists() ? snap.data().balance : 0;
 
-  if(amt > bal){
-    alert("Insufficient Balance ❌");
-    return;
-  }
+  if(amt > bal) return alert("Insufficient Balance ❌");
 
   await addDoc(collection(db, "requests"), {
     userId,
@@ -174,7 +166,7 @@ if(localStorage.getItem("role")==="admin"){
   loadRequests();
 }
 
-// ✅ LOAD REQUESTS SAFE
+// ✅ LOAD REQUESTS
 async function loadRequests(){
   let snap = await getDocs(collection(db, "requests"));
   let box = document.getElementById("requests");
@@ -193,7 +185,7 @@ async function loadRequests(){
   });
 }
 
-// ✅ APPROVE FIX (safe update)
+// ✅ APPROVE
 window.approve = async function(id, uid, amt, type){
 
   const reqRef = doc(db,"requests",id);
