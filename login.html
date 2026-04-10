@@ -44,48 +44,126 @@ button{
   font-weight:bold;
   cursor:pointer;
 }
+
+.switch{
+  margin-top:10px;
+  font-size:14px;
+  cursor:pointer;
+  color:cyan;
+}
 </style>
 </head>
 
 <body>
 
 <div class="box">
-  <h2>🔥 Agent X Login</h2>
+  <h2 id="title">🔥 Agent X Login</h2>
 
-  <!-- ✅ FORM USE KIYA -->
-  <form onsubmit="login(event)">
-    <input type="text" id="user" placeholder="Enter Email">
-    <input type="password" id="pass" placeholder="Enter Password">
-
+  <!-- LOGIN FORM -->
+  <form id="loginForm" onsubmit="login(event)">
+    <input type="text" id="loginUser" placeholder="Enter Email">
+    <input type="password" id="loginPass" placeholder="Enter Password">
     <button type="submit">Login</button>
   </form>
+
+  <!-- REGISTER FORM -->
+  <form id="registerForm" style="display:none;" onsubmit="register(event)">
+    <input type="text" id="regUser" placeholder="Enter Email">
+    <input type="password" id="regPass" placeholder="Enter Password">
+    <button type="submit">Register</button>
+  </form>
+
+  <div class="switch" onclick="toggleForm()">Create Account / Login</div>
 </div>
 
 <script>
 
+// 🔄 SWITCH LOGIN/REGISTER
+function toggleForm(){
+  let loginForm = document.getElementById("loginForm");
+  let registerForm = document.getElementById("registerForm");
+  let title = document.getElementById("title");
+
+  if(loginForm.style.display !== "none"){
+    loginForm.style.display = "none";
+    registerForm.style.display = "block";
+    title.innerText = "🔥 Register";
+  } else {
+    loginForm.style.display = "block";
+    registerForm.style.display = "none";
+    title.innerText = "🔥 Agent X Login";
+  }
+}
+
+// 🔐 LOGIN
 function login(e){
-  e.preventDefault(); // 🔥 page reload stop
+  e.preventDefault();
 
-  console.log("Login button clicked"); // debug
-
-  let u = document.getElementById("user").value;
-  let p = document.getElementById("pass").value;
+  let u = document.getElementById("loginUser").value;
+  let p = document.getElementById("loginPass").value;
 
   if(u=="" || p==""){
     alert("Fill all fields ❌");
     return;
   }
 
+  // 👑 ADMIN LOGIN (fixed)
   if(u === "satyam@gmail.com" && p === "1234"){
     localStorage.setItem("login", "yes");
     localStorage.setItem("role", "admin");
 
-    alert("Login Successful ✅");
+    alert("Admin Login Successful ✅");
+    window.location.href = "index.html";
+    return;
+  }
 
+  // 👤 USER LOGIN
+  let data = JSON.parse(localStorage.getItem("users")) || [];
+
+  let found = data.find(x => x.user === u && x.pass === p);
+
+  if(found){
+    localStorage.setItem("login", "yes");
+    localStorage.setItem("role", "user");
+
+    alert("Login Successful ✅");
     window.location.href = "index.html";
   } else {
     alert("Wrong Email or Password ❌");
   }
+}
+
+// 📝 REGISTER
+function register(e){
+  e.preventDefault();
+
+  let u = document.getElementById("regUser").value;
+  let p = document.getElementById("regPass").value;
+
+  if(u=="" || p==""){
+    alert("Fill all fields ❌");
+    return;
+  }
+
+  let data = JSON.parse(localStorage.getItem("users")) || [];
+
+  // duplicate check
+  let exist = data.find(x => x.user === u);
+  if(exist){
+    alert("User already exists ❌");
+    return;
+  }
+
+  data.push({
+    user: u,
+    pass: p
+  });
+
+  localStorage.setItem("users", JSON.stringify(data));
+
+  alert("Registered Successfully ✅");
+
+  toggleForm(); // वापस login पे
 }
 
 </script>
