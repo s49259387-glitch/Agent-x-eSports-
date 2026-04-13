@@ -53,16 +53,7 @@ body {
 <body>
 
 <script>
-// ✅ LOGIN CHECK
 if(localStorage.getItem("login") !== "yes"){
-  window.location.href = "login.html";
-}
-
-// ✅ USER ID (FIXED)
-let userId = localStorage.getItem("userId");
-
-if(!userId){
-  alert("Session expired ❌");
   window.location.href = "login.html";
 }
 </script>
@@ -95,10 +86,10 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDbEHxzNCGHbCYFDESVX_qtaoiO2e0qMyM",
+  apiKey: "YOUR_API_KEY",
   authDomain: "agent-x-d7f22.firebaseapp.com",
   projectId: "agent-x-d7f22",
-  storageBucket: "agent-x-d7f22.firebasestorage.app",
+  storageBucket: "agent-x-d7f22.appspot.com",
   messagingSenderId: "1055506789692",
   appId: "1:1055506789692:web:72a9df8c2cf9a57c92da39"
 };
@@ -106,29 +97,27 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// ✅ WALLET LOAD
-async function loadWallet(){
-  try{
-    const ref = doc(db, "wallets", userId);
-    const snap = await getDoc(ref);
+// 🔥 FIX: use Firebase UID (important)
+let userId = localStorage.getItem("uid");
 
-    if(snap.exists()){
-      document.getElementById("walletBalance").innerText = "₹ " + snap.data().balance;
-    } else {
-      await setDoc(ref, { balance: 0 });
-      document.getElementById("walletBalance").innerText = "₹ 0";
-    }
-  }catch(e){
-    console.log(e);
-    alert("Firebase error ❌");
+// WALLET LOAD
+async function loadWallet(){
+  const ref = doc(db, "wallets", userId);
+  const snap = await getDoc(ref);
+
+  if(snap.exists()){
+    document.getElementById("walletBalance").innerText = "₹ " + snap.data().balance;
+  } else {
+    await setDoc(ref, { balance: 0 });
+    document.getElementById("walletBalance").innerText = "₹ 0";
   }
 }
 loadWallet();
 
-// ✅ DEPOSIT
+// DEPOSIT
 window.deposit = async function(){
   let amt = prompt("Enter Amount");
-  if(!amt || amt <= 0) return alert("Invalid amount ❌");
+  if(!amt || amt<=0) return alert("Invalid ❌");
 
   await addDoc(collection(db, "requests"), {
     userId,
@@ -137,22 +126,19 @@ window.deposit = async function(){
     status: "pending"
   });
 
-  alert("Deposit Request Sent ✅");
+  alert("Request Sent ✅");
 }
 
-// ✅ WITHDRAW
+// WITHDRAW
 window.withdraw = async function(){
   let amt = prompt("Enter Amount");
-  if(!amt || amt <= 0) return alert("Invalid amount ❌");
+  if(!amt || amt<=0) return alert("Invalid ❌");
 
   const ref = doc(db, "wallets", userId);
   const snap = await getDoc(ref);
-
   let bal = snap.exists() ? snap.data().balance : 0;
 
-  if(amt > bal){
-    return alert("Insufficient Balance ❌");
-  }
+  if(amt > bal) return alert("Insufficient ❌");
 
   await addDoc(collection(db, "requests"), {
     userId,
@@ -161,56 +147,10 @@ window.withdraw = async function(){
     status: "pending"
   });
 
-  alert("Withdraw Request Sent ✅");
+  alert("Request Sent ✅");
 }
 
-// ✅ ADMIN PANEL
-if(localStorage.getItem("role") === "admin"){
-  document.getElementById("adminPanel").style.display = "block";
-  loadRequests();
-}
-
-// ✅ LOAD REQUESTS
-async function loadRequests(){
-  let snap = await getDocs(collection(db, "requests"));
-  let box = document.getElementById("requests");
-  box.innerHTML = "";
-
-  snap.forEach(docSnap=>{
-    let d = docSnap.data();
-
-    box.innerHTML += `
-    <div style="background:#333;margin:10px;padding:10px;border-radius:10px;">
-      ₹${d.amount} (${d.type}) - ${d.status}
-      ${d.status === "pending" ? 
-      `<button onclick="approve('${docSnap.id}','${d.userId}',${d.amount},'${d.type}')">Approve</button>` : 
-      `<span style="color:lightgreen;">✔ Approved</span>`}
-    </div>`;
-  });
-}
-
-// ✅ APPROVE
-window.approve = async function(id, uid, amt, type){
-
-  const reqRef = doc(db,"requests",id);
-  await updateDoc(reqRef,{status:"approved"});
-
-  const walletRef = doc(db,"wallets",uid);
-  const snap = await getDoc(walletRef);
-
-  let bal = snap.exists() ? snap.data().balance : 0;
-
-  if(type==="deposit") bal += amt;
-  else bal -= amt;
-
-  await setDoc(walletRef,{balance:bal});
-
-  alert("Approved ✅");
-  loadRequests();
-  loadWallet();
-}
-
-// ✅ LOGOUT
+// LOGOUT
 window.logout = function(){
   localStorage.clear();
   window.location.href="login.html";
