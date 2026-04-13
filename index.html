@@ -11,13 +11,14 @@ body {
   font-family: Arial;
   background: linear-gradient(#1d1f3a,#2b2e5a);
   color: white;
-  padding-bottom: 120px; /* 🔥 FIX */
+  padding-bottom: 140px;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   padding: 15px;
+  align-items: center;
 }
 
 .walletBox {
@@ -28,22 +29,24 @@ body {
 
 .joinBtn {
   width: 100%;
-  padding: 12px;
+  padding: 14px;
   background: cyan;
   border: none;
   border-radius: 10px;
-  margin-top: 10px;
+  margin-top: 15px;
   font-weight: bold;
+  font-size: 16px;
 }
 
 .navbar {
   position: fixed;
-  bottom: 60px; /* 🔥 ads fix */
+  bottom: 60px;
   width: 100%;
   background: #1d1f3a;
   display: flex;
   justify-content: space-around;
-  padding: 10px 0;
+  padding: 12px 0;
+  font-size: 16px;
 }
 </style>
 </head>
@@ -51,8 +54,8 @@ body {
 <body>
 
 <script>
-// ✅ FIXED LOGIN CHECK
-if(!localStorage.getItem("login")){
+// ✅ LOGIN CHECK FIX
+if(localStorage.getItem("login") !== "yes"){
   window.location.href = "login.html";
 }
 </script>
@@ -61,7 +64,7 @@ if(!localStorage.getItem("login")){
   <div>🔥 Agent X eSports</div>
   <div>
     <span class="walletBox" id="walletBalance">₹ 0</span>
-    <span onclick="logout()" style="cursor:pointer;">🚪</span>
+    <span onclick="logout()" style="cursor:pointer;margin-left:10px;">🚪</span>
   </div>
 </div>
 
@@ -79,12 +82,12 @@ if(!localStorage.getItem("login")){
   <div onclick="location.reload()">🏠 Home</div>
 </div>
 
-<!-- FIREBASE -->
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+// ✅ Firebase Config
 const firebaseConfig = {
   apiKey: "AIzaSyDbEHxzNCGHbCYFDESVX_qtaoiO2e0qMyM",
   authDomain: "agent-x-d7f22.firebaseapp.com",
@@ -97,14 +100,14 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// ✅ USER ID FIX
+// ✅ USER ID (important fix)
 let userId = localStorage.getItem("userId");
 if(!userId){
   userId = "user_" + Date.now();
   localStorage.setItem("userId", userId);
 }
 
-// ✅ WALLET LOAD
+// ✅ WALLET LOAD (main fix)
 async function loadWallet(){
   try{
     const ref = doc(db, "wallets", userId);
@@ -116,17 +119,18 @@ async function loadWallet(){
       await setDoc(ref, { balance: 0 });
       document.getElementById("walletBalance").innerText = "₹ 0";
     }
-  }catch(err){
-    console.log(err);
-    alert("Wallet load error ❌");
+  }catch(e){
+    console.log(e);
+    document.getElementById("walletBalance").innerText = "₹ 0";
   }
 }
+
 loadWallet();
 
 // ✅ DEPOSIT
 window.deposit = async function(){
   let amt = prompt("Enter Amount");
-  if(!amt || amt<=0) return alert("Invalid amount ❌");
+  if(!amt || amt <= 0) return alert("Invalid amount ❌");
 
   await addDoc(collection(db, "requests"), {
     userId,
@@ -141,14 +145,16 @@ window.deposit = async function(){
 // ✅ WITHDRAW
 window.withdraw = async function(){
   let amt = prompt("Enter Amount");
-  if(!amt || amt<=0) return alert("Invalid amount ❌");
+  if(!amt || amt <= 0) return alert("Invalid amount ❌");
 
   const ref = doc(db, "wallets", userId);
   const snap = await getDoc(ref);
 
   let bal = snap.exists() ? snap.data().balance : 0;
 
-  if(amt > bal) return alert("Insufficient Balance ❌");
+  if(amt > bal){
+    return alert("Insufficient Balance ❌");
+  }
 
   await addDoc(collection(db, "requests"), {
     userId,
@@ -161,8 +167,8 @@ window.withdraw = async function(){
 }
 
 // ✅ ADMIN PANEL
-if(localStorage.getItem("role")==="admin"){
-  document.getElementById("adminPanel").style.display="block";
+if(localStorage.getItem("role") === "admin"){
+  document.getElementById("adminPanel").style.display = "block";
   loadRequests();
 }
 
@@ -202,7 +208,6 @@ window.approve = async function(id, uid, amt, type){
   await setDoc(walletRef,{balance:bal});
 
   alert("Approved ✅");
-
   loadRequests();
   loadWallet();
 }
