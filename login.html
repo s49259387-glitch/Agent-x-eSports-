@@ -42,14 +42,11 @@ button{
   border:none;
   border-radius:10px;
   font-weight:bold;
-  cursor:pointer;
 }
-
 .switch{
   margin-top:10px;
-  font-size:14px;
-  cursor:pointer;
   color:cyan;
+  cursor:pointer;
 }
 </style>
 </head>
@@ -59,100 +56,77 @@ button{
 <div class="box">
   <h2 id="title">🔥 Agent X Login</h2>
 
-  <!-- LOGIN -->
   <form id="loginForm" onsubmit="login(event)">
-    <input type="email" id="loginUser" placeholder="Enter Email">
-    <input type="password" id="loginPass" placeholder="Enter Password">
-    <button type="submit">Login</button>
+    <input type="email" id="loginUser" placeholder="Email" required>
+    <input type="password" id="loginPass" placeholder="Password" required>
+    <button>Login</button>
   </form>
 
-  <!-- REGISTER -->
   <form id="registerForm" style="display:none;" onsubmit="register(event)">
-    <input type="email" id="regUser" placeholder="Enter Email">
-    <input type="password" id="regPass" placeholder="Enter Password">
-    <button type="submit">Register</button>
+    <input type="email" id="regUser" placeholder="Email" required>
+    <input type="password" id="regPass" placeholder="Password" required>
+    <button>Register</button>
   </form>
 
   <div class="switch" onclick="toggleForm()">Create Account / Login</div>
 </div>
 
-<!-- 🔥 FIREBASE SDK -->
 <script type="module">
 
-// ✅ IMPORTS
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-// 🔥 TERA FIREBASE CONFIG
 const firebaseConfig = {
-  apiKey: "AIzaSyDbEHxzNCGHbCYFDESVX_qtaoiO2e0qMyM",
+  apiKey: "YOUR_API_KEY",
   authDomain: "agent-x-d7f22.firebaseapp.com",
   projectId: "agent-x-d7f22",
-  storageBucket: "agent-x-d7f22.firebasestorage.app",
+  storageBucket: "agent-x-d7f22.appspot.com",
   messagingSenderId: "1055506789692",
   appId: "1:1055506789692:web:72a9df8c2cf9a57c92da39"
 };
 
-// INIT
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-// 🔄 SWITCH
+// SWITCH
 window.toggleForm = function(){
-  let loginForm = document.getElementById("loginForm");
-  let registerForm = document.getElementById("registerForm");
-  let title = document.getElementById("title");
+  loginForm.style.display =
+  loginForm.style.display === "none" ? "block" : "none";
 
-  if(loginForm.style.display !== "none"){
-    loginForm.style.display = "none";
-    registerForm.style.display = "block";
-    title.innerText = "🔥 Register";
-  } else {
-    loginForm.style.display = "block";
-    registerForm.style.display = "none";
-    title.innerText = "🔥 Agent X Login";
-  }
+  registerForm.style.display =
+  registerForm.style.display === "none" ? "block" : "none";
 }
 
-// 🔐 LOGIN
+// LOGIN
 window.login = function(e){
   e.preventDefault();
 
-  let email = document.getElementById("loginUser").value;
-  let pass = document.getElementById("loginPass").value;
+  let email = loginUser.value;
+  let pass = loginPass.value;
 
   signInWithEmailAndPassword(auth, email, pass)
-  .then((userCredential) => {
+  .then((user) => {
 
+    // 🔥 MAIN FIX
     localStorage.setItem("login", "yes");
-    localStorage.setItem("role", "user");
+    localStorage.setItem("uid", user.user.uid);
 
-    alert("Login Successful ✅");
-    window.location.href = "index.html";
-
+    alert("Login Success ✅");
+    window.location.href="index.html";
   })
-  .catch((error) => {
-    alert("Login Failed ❌ " + error.message);
-  });
+  .catch(err => alert(err.message));
 }
 
-// 📝 REGISTER
+// REGISTER
 window.register = function(e){
   e.preventDefault();
 
-  let email = document.getElementById("regUser").value;
-  let pass = document.getElementById("regPass").value;
-
-  createUserWithEmailAndPassword(auth, email, pass)
-  .then((userCredential) => {
-
-    alert("Registered Successfully ✅");
+  createUserWithEmailAndPassword(auth, regUser.value, regPass.value)
+  .then(()=>{
+    alert("Registered ✅");
     toggleForm();
-
   })
-  .catch((error) => {
-    alert("Register Failed ❌ " + error.message);
-  });
+  .catch(err=>alert(err.message));
 }
 
 </script>
