@@ -46,7 +46,6 @@ body {
   display: flex;
   justify-content: space-around;
   padding: 12px 0;
-  font-size: 16px;
 }
 </style>
 </head>
@@ -54,8 +53,16 @@ body {
 <body>
 
 <script>
-// ✅ LOGIN CHECK FIX
+// ✅ LOGIN CHECK
 if(localStorage.getItem("login") !== "yes"){
+  window.location.href = "login.html";
+}
+
+// ✅ USER ID (FIXED)
+let userId = localStorage.getItem("userId");
+
+if(!userId){
+  alert("Session expired ❌");
   window.location.href = "login.html";
 }
 </script>
@@ -87,7 +94,6 @@ if(localStorage.getItem("login") !== "yes"){
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// ✅ Firebase Config
 const firebaseConfig = {
   apiKey: "AIzaSyDbEHxzNCGHbCYFDESVX_qtaoiO2e0qMyM",
   authDomain: "agent-x-d7f22.firebaseapp.com",
@@ -100,14 +106,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// ✅ USER ID (important fix)
-let userId = localStorage.getItem("userId");
-if(!userId){
-  userId = "user_" + Date.now();
-  localStorage.setItem("userId", userId);
-}
-
-// ✅ WALLET LOAD (main fix)
+// ✅ WALLET LOAD
 async function loadWallet(){
   try{
     const ref = doc(db, "wallets", userId);
@@ -121,10 +120,9 @@ async function loadWallet(){
     }
   }catch(e){
     console.log(e);
-    document.getElementById("walletBalance").innerText = "₹ 0";
+    alert("Firebase error ❌");
   }
 }
-
 loadWallet();
 
 // ✅ DEPOSIT
